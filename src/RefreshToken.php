@@ -16,9 +16,9 @@ class RefreshToken
     public function __invoke(
         string $cacheKey,
         string $refreshUrl,
-        string $clientId,
-        string $clientSecret,
-        array $options,
+        string $clientId = '',
+        string $clientSecret = '',
+        array $options = [],
         string $tokenType = 'Bearer'
     ): string {
         $options = array_merge([

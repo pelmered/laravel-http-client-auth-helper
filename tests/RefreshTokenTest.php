@@ -2,6 +2,7 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper\Tests;
 
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -25,7 +26,10 @@ class RefreshTokenTest extends TestCase
 
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
-            return $request->hasHeader('Authorization', 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=') && $request->url() === 'https://example.com/oauth/token' && $request['grant_type'] === 'client_credentials' && $request['scope'] === 'scope1 scope2';
+            return $request->hasHeader('Authorization', 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=')
+                   && $request->url() === 'https://example.com/oauth/token'
+                   && $request['grant_type'] === 'client_credentials'
+                   && $request['scope'] === 'scope1 scope2';
         });
     }
 
@@ -46,7 +50,33 @@ class RefreshTokenTest extends TestCase
 
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
-            return $request->url() === 'https://example.com/oauth/token' && $request['grant_type'] === 'password_credentials' && $request['scope'] === 'scope1 scope2' && $request['client_id'] === 'my_client_id' && $request['client_secret'] === 'my_client_secret';
+            return $request->url() === 'https://example.com/oauth/token'
+                   && $request['grant_type'] === 'password_credentials'
+                   && $request['scope'] === 'scope1 scope2'
+                   && $request['client_id'] === 'my_client_id'
+                   && $request['client_secret'] === 'my_client_secret';
+        });
+    }
+    public function testRefreshTokenCustom(): void
+    {
+        Cache::clear();
+        $accessToken = app(RefreshToken::class)(
+            'oauth_token_my_token',
+            'https://example.com/oauth/token',
+            options: [
+                'grant_type'       => 'password_credentials',
+                'scopes'           => ['scope1', 'scope2'],
+                'auth_type'        => 'custom',
+                'apply_auth_token' => fn(PendingRequest $httpClient) => $httpClient->withHeader('Authorization', 'my_custom_token'),
+            ]
+        );
+
+        $this->assertEquals('this_is_my_access_token', $accessToken);
+        Http::assertSent(static function (Request $request) {
+            return $request->url() === 'https://example.com/oauth/token'
+                   && $request->hasHeader('Authorization', 'my_custom_token')
+                   && $request['grant_type'] === 'password_credentials'
+                   && $request['scope'] === 'scope1 scope2';
         });
     }
 
@@ -67,7 +97,9 @@ class RefreshTokenTest extends TestCase
 
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
-            return $request->url() === 'https://example.com/oauth/token' && $request['grant_type'] === 'client_credentials' && $request['scope'] === 'scope1 scope2';
+            return $request->url() === 'https://example.com/oauth/token'
+                   && $request['grant_type'] === 'client_credentials'
+                   && $request['scope'] === 'scope1 scope2';
         });
 
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'this_is_my_access_token', 60);
@@ -127,7 +159,9 @@ class RefreshTokenTest extends TestCase
         $this->assertEquals('my_custom_access_token', $accessToken);
 
         Http::assertSent(static function (Request $request) {
-            return $request->url() === 'https://example.com/oauth/token' && $request['grant_type'] === 'client_credentials' && $request['scope'] === 'scope1 scope2';
+            return $request->url() === 'https://example.com/oauth/token'
+                   && $request['grant_type'] === 'client_credentials'
+                   && $request['scope'] === 'scope1 scope2';
         });
 
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'my_custom_access_token', 3600);
