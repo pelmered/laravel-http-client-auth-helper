@@ -12,14 +12,16 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Http::macro('withOAuthToken', function (
-            string $tokenName,
             string $refreshUrl,
             string $clientId,
             string $clientSecret,
             array $options = [],
             string $tokenType = 'Bearer'
         ): PendingRequest {
-            $accessToken = Cache::get('oauth_token_'.$tokenName) ?? app(RefreshToken::class)(...func_get_args());
+
+            $cacheKey = 'oauth_token_'.str($refreshUrl)->replace(['https://', '/'], [''])->__toString();
+
+            $accessToken = Cache::get($cacheKey) ?? app(RefreshToken::class)($cacheKey, ...func_get_args());
 
             return Http::withToken($accessToken, $tokenType);
         });

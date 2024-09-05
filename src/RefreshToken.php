@@ -14,7 +14,7 @@ class RefreshToken
      * @throws Exception
      */
     public function __invoke(
-        string $tokenName,
+        string $cacheKey,
         string $refreshUrl,
         string $clientId,
         string $clientSecret,
@@ -37,8 +37,8 @@ class RefreshToken
 
         match ($options['auth_type']) {
             'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
-            'header' => $httpClient->withToken($tokenName),
             'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
+            'custom' => $httpClient = $options['apply_auth_token']($httpClient),
             default  => throw new Exception('Invalid auth type')
         };
 
@@ -49,7 +49,7 @@ class RefreshToken
         //dd($options, $response, $response->json());
         $accessToken = is_callable($options['access_token']) ? $options['access_token']($response) : $response->json()['access_token'];
 
-        Cache::put('oauth_token_'.$tokenName, $accessToken, $ttl);
+        Cache::put($cacheKey, $accessToken, $ttl);
 
         return $accessToken;
     }

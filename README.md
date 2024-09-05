@@ -29,12 +29,11 @@ composer require pelmered/laravel-http-oauth-helper
 
 ## Usage
 
-It's really simple to use. Just add the `withOAuthToken` method to your HTTP request and provide the necessary parameters.
+It's really simple to use. Just add the `withOAuthToken` method to your HTTP request and provide the necessary parameters. No configuration needed.
 
 Minimal example:
 ```php
 $response = Http::withOAuthToken(
-  'token_name',
   'https://example.com/token.oauth2',
   'client_id',
   'client_secret',
@@ -46,7 +45,6 @@ $response = Http::withOAuthToken(
 All parameters with default values:
 ```php
 $response = Http::withOAuthToken(
-  'token_name',
   'https://example.com/token.oauth2',
   'client_id',
   'client_secret',
@@ -65,7 +63,6 @@ $response = Http::withOAuthToken(
 You can also provide callbacks for `expires`, `auth_type`, and `access_token` to customize the behavior.
 ```php
 $response = Http::withOAuthToken(
-  'token_name',
   'https://example.com/token.oauth2',
   'client_id',
   'client_secret',
@@ -79,12 +76,11 @@ $response = Http::withOAuthToken(
 );
 ```
 
-## Tip
+### Tips
 
 If you use the same token on multiple places you can create the client only once and save it. For example:
 ```php
 $this->client = Http::withOAuthToken(
-  'token_name',
   'https://example.com/token.oauth2',
   'client_id',
   'client_secret',
@@ -104,4 +100,24 @@ $this->client->post('posts', [
   'title' => 'My post',
   'content' => 'My content',
 ]);
+```
+
+You can also resolve it in the container if you want.
+In your service provider:
+```php
+$this->app->singleton('my-oauth-client', function ($app) {
+  return Http::withOAuthToken(
+    'https://example.com/token.oauth2',
+    'client_id',
+    'client_secret',
+    [
+      'scopes' => ['read:posts', 'write:posts', 'read:comments'],
+    ]
+  )->baseUrl('https://example.com/api');
+});
+```
+
+Then use it like:
+```php
+app('my-oauth-client')->get('posts');
 ```

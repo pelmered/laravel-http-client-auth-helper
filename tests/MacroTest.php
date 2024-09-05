@@ -18,7 +18,6 @@ class MacroTest extends TestCase
     public function testMacro(): void
     {
         $response = Http::withOAuthToken(
-            'my_token',
             'https://example.com/oauth/token',
             'client_id',
             'client_secret',

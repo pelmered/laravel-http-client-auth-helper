@@ -13,7 +13,7 @@ class RefreshTokenTest extends TestCase
     {
         Cache::clear();
         $accessToken = app(RefreshToken::class)(
-            'my_token',
+            'oauth_token_my_token',
             'https://example.com/oauth/token',
             'client_id',
             'client_secret',
@@ -33,7 +33,7 @@ class RefreshTokenTest extends TestCase
     {
         Cache::clear();
         $accessToken = app(RefreshToken::class)(
-            'my_token',
+            'oauth_token_my_token',
             'https://example.com/oauth/token',
             'my_client_id',
             'my_client_secret',
@@ -55,7 +55,7 @@ class RefreshTokenTest extends TestCase
         Cache::spy();
 
         $accessToken = app(RefreshToken::class)(
-            'my_token',
+            'oauth_token_my_token',
             'https://example.com/oauth/token',
             'my_client_id',
             'my_client_secret',
@@ -78,7 +78,7 @@ class RefreshTokenTest extends TestCase
         Cache::spy();
 
         $accessToken = app(RefreshToken::class)(
-            'my_token',
+            'oauth_token_my_token',
             'https://example.com/oauth/token',
             'my_client_id',
             'my_client_secret',
@@ -112,7 +112,7 @@ class RefreshTokenTest extends TestCase
 
         Cache::spy();
         $accessToken = app(RefreshToken::class)(
-            'my_token',
+            'oauth_token_my_token',
             'https://example.com/oauth/token',
             'my_client_id',
             'my_client_secret',
