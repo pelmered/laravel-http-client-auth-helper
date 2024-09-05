@@ -6,6 +6,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use Pelmered\LaravelHttpOAuthHelper\RefreshToken;
 
 class RefreshTokenTest extends TestCase
@@ -81,7 +82,7 @@ class RefreshTokenTest extends TestCase
         });
     }
 
-    public function testRefreshTokenWithExpiry()
+    public function testRefreshTokenWithExpiry(): void
     {
         Cache::spy();
 
@@ -106,7 +107,7 @@ class RefreshTokenTest extends TestCase
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'this_is_my_access_token', 60);
     }
 
-    public function testRefreshTokenWithExpiryCallback()
+    public function testRefreshTokenWithExpiryCallback(): void
     {
         Cache::spy();
 
@@ -131,7 +132,7 @@ class RefreshTokenTest extends TestCase
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'this_is_my_access_token', 7200);
     }
 
-    public function testGetAccessTokenFromCustomKey()
+    public function testGetAccessTokenFromCustomKey(): void
     {
         $this->clearExistingFakes();
         Http::fake([
@@ -166,5 +167,24 @@ class RefreshTokenTest extends TestCase
         });
 
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'my_custom_access_token', 3600);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testThrowsExceptionForInvalidAuthType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        app(RefreshToken::class)(
+            'oauth_token_my_token',
+            'https://example.com/oauth/token',
+            'my_client_id',
+            'my_client_secret',
+            [
+                'scopes'    => ['scope1', 'scope2'],
+                'auth_type' => 'invalid',
+            ]
+        );
     }
 }

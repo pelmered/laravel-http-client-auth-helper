@@ -5,6 +5,7 @@ namespace Pelmered\LaravelHttpOAuthHelper;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 
 class RefreshToken
 {
@@ -39,7 +40,7 @@ class RefreshToken
             'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
             'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
             'custom' => $httpClient  = $options['apply_auth_token']($httpClient),
-            default  => throw new Exception('Invalid auth type')
+            default  => throw new InvalidArgumentException('Invalid auth type')
         };
 
         $response = $httpClient->post($refreshUrl, $requestBody);
