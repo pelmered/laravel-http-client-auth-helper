@@ -31,7 +31,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^10 || ^11",
-        "filament/filament": "v3.2.21",
         "orchestra/testbench": "^8.8 || ^9.0",
         "phpstan/phpstan": "^1.10",
         "nunomaduro/collision": "^7.6 || ^8.0",
