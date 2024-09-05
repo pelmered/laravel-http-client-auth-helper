@@ -20,7 +20,7 @@ class RefreshToken
         string $clientSecret,
         array $options,
         string $tokenType = 'Bearer'
-    ): PendingRequest {
+    ): string {
         $options = array_merge([
             'scopes'       => [],
             'auth_type'    => 'basic',
@@ -51,6 +51,6 @@ class RefreshToken
 
         Cache::put('oauth_token_'.$tokenName, $accessToken, $ttl);
 
-        return Http::withToken($accessToken, $tokenType);
+        return $accessToken;
     }
 }
