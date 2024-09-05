@@ -2,8 +2,8 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper\Tests;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 
 class MacroTest extends TestCase
 {
@@ -26,8 +26,7 @@ class MacroTest extends TestCase
         )->get('https://example.com/api');
 
         Http::assertSent(function (Request $request) {
-            return $request->hasHeader('Authorization', 'Bearer this_is_my_access_token') &&
-                   $request->url() === 'https://example.com/api';
+            return $request->hasHeader('Authorization', 'Bearer this_is_my_access_token') && $request->url() === 'https://example.com/api';
         });
     }
 }

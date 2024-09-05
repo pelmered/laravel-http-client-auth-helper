@@ -7,7 +7,6 @@ use Pelmered\LaravelHttpOAuthHelper\LaravelHttpOAuthHelperServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-
     public function setUp(): void
     {
         parent::setUp();
@@ -15,10 +14,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         Http::fake([
             'https://example.com/oauth/token' => Http::response([
-                'token_type' => 'Bearer',
+                'token_type'   => 'Bearer',
                 'access_token' => 'this_is_my_access_token',
-                'scope' => 'scope1 scope2',
-                'expires_in' => 7200,
+                'scope'        => 'scope1 scope2',
+                'expires_in'   => 7200,
             ], 200),
             'https://example.com/api' => Http::response([
                 'data' => 'some data',
@@ -32,6 +31,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
             LaravelHttpOAuthHelperServiceProvider::class,
         ];
     }
+
     public static function callMethod($obj, $name, array $args)
     {
         $class = new \ReflectionClass($obj);
@@ -51,7 +51,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function clearExistingFakes(): static
     {
         $reflection = new \ReflectionObject(Http::getFacadeRoot());
-        $property = $reflection->getProperty('stubCallbacks');
+        $property   = $reflection->getProperty('stubCallbacks');
         $property->setAccessible(true);
         $property->setValue(Http::getFacadeRoot(), collect());
 

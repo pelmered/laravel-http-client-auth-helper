@@ -2,7 +2,6 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper;
 
-use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -25,5 +24,4 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
             return Http::withToken($accessToken, $tokenType);
         });
     }
-
 }
