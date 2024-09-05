@@ -27,9 +27,9 @@ class RefreshTokenTest extends TestCase
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
             return $request->hasHeader('Authorization', 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=')
-                   && $request->url() === 'https://example.com/oauth/token'
+                   && $request->url()        === 'https://example.com/oauth/token'
                    && $request['grant_type'] === 'client_credentials'
-                   && $request['scope'] === 'scope1 scope2';
+                   && $request['scope']      === 'scope1 scope2';
         });
     }
 
@@ -50,13 +50,14 @@ class RefreshTokenTest extends TestCase
 
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
-            return $request->url() === 'https://example.com/oauth/token'
-                   && $request['grant_type'] === 'password_credentials'
-                   && $request['scope'] === 'scope1 scope2'
-                   && $request['client_id'] === 'my_client_id'
+            return $request->url()              === 'https://example.com/oauth/token'
+                   && $request['grant_type']    === 'password_credentials'
+                   && $request['scope']         === 'scope1 scope2'
+                   && $request['client_id']     === 'my_client_id'
                    && $request['client_secret'] === 'my_client_secret';
         });
     }
+
     public function testRefreshTokenCustom(): void
     {
         Cache::clear();
@@ -67,7 +68,7 @@ class RefreshTokenTest extends TestCase
                 'grant_type'       => 'password_credentials',
                 'scopes'           => ['scope1', 'scope2'],
                 'auth_type'        => 'custom',
-                'apply_auth_token' => fn(PendingRequest $httpClient) => $httpClient->withHeader('Authorization', 'my_custom_token'),
+                'apply_auth_token' => fn (PendingRequest $httpClient) => $httpClient->withHeader('Authorization', 'my_custom_token'),
             ]
         );
 
@@ -76,7 +77,7 @@ class RefreshTokenTest extends TestCase
             return $request->url() === 'https://example.com/oauth/token'
                    && $request->hasHeader('Authorization', 'my_custom_token')
                    && $request['grant_type'] === 'password_credentials'
-                   && $request['scope'] === 'scope1 scope2';
+                   && $request['scope']      === 'scope1 scope2';
         });
     }
 
@@ -97,9 +98,9 @@ class RefreshTokenTest extends TestCase
 
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
-            return $request->url() === 'https://example.com/oauth/token'
+            return $request->url()           === 'https://example.com/oauth/token'
                    && $request['grant_type'] === 'client_credentials'
-                   && $request['scope'] === 'scope1 scope2';
+                   && $request['scope']      === 'scope1 scope2';
         });
 
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'this_is_my_access_token', 60);
@@ -159,9 +160,9 @@ class RefreshTokenTest extends TestCase
         $this->assertEquals('my_custom_access_token', $accessToken);
 
         Http::assertSent(static function (Request $request) {
-            return $request->url() === 'https://example.com/oauth/token'
+            return $request->url()           === 'https://example.com/oauth/token'
                    && $request['grant_type'] === 'client_credentials'
-                   && $request['scope'] === 'scope1 scope2';
+                   && $request['scope']      === 'scope1 scope2';
         });
 
         Cache::shouldHaveReceived('put')->once()->with('oauth_token_my_token', 'my_custom_access_token', 3600);

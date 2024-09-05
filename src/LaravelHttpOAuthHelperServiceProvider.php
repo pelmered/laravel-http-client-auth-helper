@@ -18,7 +18,6 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
             array $options = [],
             string $tokenType = 'Bearer'
         ): PendingRequest {
-
             $cacheKey = 'oauth_token_'.str($refreshUrl)->replace(['https://', '/'], [''])->__toString();
 
             $accessToken = Cache::get($cacheKey) ?? app(RefreshToken::class)($cacheKey, ...func_get_args());

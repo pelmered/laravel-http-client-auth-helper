@@ -38,7 +38,7 @@ class RefreshToken
         match ($options['auth_type']) {
             'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
             'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
-            'custom' => $httpClient = $options['apply_auth_token']($httpClient),
+            'custom' => $httpClient  = $options['apply_auth_token']($httpClient),
             default  => throw new Exception('Invalid auth type')
         };
 
