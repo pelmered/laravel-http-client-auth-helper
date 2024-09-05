@@ -18,7 +18,7 @@ class RefreshTokenTest extends TestCase
             'client_id',
             'client_secret',
             [
-                'scopes' => ['scope1', 'scope2'],
+                'scopes'    => ['scope1', 'scope2'],
                 'auth_type' => 'basic',
             ]
         );
@@ -26,7 +26,6 @@ class RefreshTokenTest extends TestCase
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
             return $request->hasHeader('Authorization', 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=') && $request->url() === 'https://example.com/oauth/token' && $request['grant_type'] === 'client_credentials' && $request['scope'] === 'scope1 scope2';
-
         });
     }
 
