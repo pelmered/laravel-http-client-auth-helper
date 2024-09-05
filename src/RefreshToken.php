@@ -23,7 +23,7 @@ class RefreshToken
     ): string {
         $options = array_merge([
             'scopes'       => [],
-            'auth_type'    => 'basic',
+            'auth_type'    => 'body',
             'expires'      => 3600,
             'access_token' => 'access_token',
         ], $options);
@@ -37,7 +37,7 @@ class RefreshToken
 
         match ($options['auth_type']) {
             'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
-            'bearer' => $httpClient->withToken($tokenName),
+            'header' => $httpClient->withToken($tokenName),
             'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
             default  => throw new Exception('Invalid auth type')
         };
