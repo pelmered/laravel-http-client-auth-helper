@@ -42,7 +42,6 @@ class RefreshToken
             default  => throw new Exception('Invalid auth type')
         };
 
-        dump($requestBody);
         $response = $httpClient->post($refreshUrl, $requestBody);
 
         $ttl = is_callable($options['expires']) ? $options['expires']($response) : $options['expires'];
