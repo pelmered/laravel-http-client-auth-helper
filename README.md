@@ -67,14 +67,37 @@ $response = Http::withOAuthToken(
   'client_id',
   'client_secret',
   [
-    "expires" => fn($response) => $response->json()["expires_in"] - 300, // Should return the ttl in seconds that has been parsed from the response and can be manipulated as you want.
-    "access_token_key" => fn($response) => $response->access_token, // Should return the access token that has been parsed from the response.
+    'expires' => fn($response) => $response->json()['expires_in'] - 300, // Should return the ttl in seconds that has been parsed from the response and can be manipulated as you want.
+    'access_token' => fn($response) => $response->access_token, // Should return the access token that has been parsed from the response.
   ],
   'Bearer'
 )->get(
   'https://example.com/api',
 );
 ```
+
+Custom auth for refreshing token:
+
+```php
+use Illuminate\Http\Client\PendingRequest;
+
+$response = Http::withOAuthToken(
+  'https://example.com/token.oauth2',
+  'client_id',
+  'client_secret',
+  [
+    'expires' => fn($response) => $response->json()['expires_in'] - 300, // Should return the ttl in seconds that has been parsed from the response and can be manipulated as you want.
+    'access_token' => fn($response) => $response->access_token, // Should return the access token that has been parsed from the response.
+    'auth_type' => 'custom',
+    'apply_auth_token' => fn(PendingRequest $httpClient) => $request->withHeader('Authorization', 'Bearer ' . $token),
+)->get(
+  'https://example.com/api',
+);
+```
+
+
+
+
 
 ### Tips
 
