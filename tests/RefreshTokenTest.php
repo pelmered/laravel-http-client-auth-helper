@@ -13,9 +13,9 @@ class RefreshTokenTest extends TestCase
     public function testRefreshTokenBasic(): void
     {
         Cache::clear();
-        $http = app(RefreshToken::class)('my_token', 'https://example.com/oauth/token', 'client_id', 'client_secret', ['scopes' => ['scope1', 'scope2']]);
+        $accessToken = app(RefreshToken::class)('my_token', 'https://example.com/oauth/token', 'client_id', 'client_secret', ['scopes' => ['scope1', 'scope2']]);
 
-        $this->assertInstanceOf(PendingRequest::class, $http);
+        $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
             return $request->hasHeader('Authorization', 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=') &&
                    $request->url() === 'https://example.com/oauth/token' &&
@@ -28,7 +28,7 @@ class RefreshTokenTest extends TestCase
     public function testRefreshTokenBody(): void
     {
         Cache::clear();
-        $http = app(RefreshToken::class)(
+        $accessToken = app(RefreshToken::class)(
             'my_token',
             'https://example.com/oauth/token',
             'my_client_id',
@@ -40,7 +40,7 @@ class RefreshTokenTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(PendingRequest::class, $http);
+        $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
             return $request->url() === 'https://example.com/oauth/token' &&
                    $request['grant_type'] === 'password_credentials' &&
@@ -53,8 +53,8 @@ class RefreshTokenTest extends TestCase
     public function testRefreshTokenWithExpiry()
     {
         Cache::spy();
-        //Cache::fake();
-        $http = app(RefreshToken::class)(
+
+        $accessToken = app(RefreshToken::class)(
             'my_token',
             'https://example.com/oauth/token',
             'my_client_id',
@@ -65,7 +65,7 @@ class RefreshTokenTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(PendingRequest::class, $http);
+        $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
             return $request->url() === 'https://example.com/oauth/token' &&
                    $request['grant_type'] === 'client_credentials' &&
@@ -79,7 +79,8 @@ class RefreshTokenTest extends TestCase
     public function testRefreshTokenWithExpiryCallback()
     {
         Cache::spy();
-        $http = app(RefreshToken::class)(
+
+        $accessToken = app(RefreshToken::class)(
             'my_token',
             'https://example.com/oauth/token',
             'my_client_id',
@@ -92,7 +93,7 @@ class RefreshTokenTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(PendingRequest::class, $http);
+        $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
             return $request->url() === 'https://example.com/oauth/token' &&
                    $request['grant_type'] === 'client_credentials' &&
@@ -116,7 +117,7 @@ class RefreshTokenTest extends TestCase
 
 
         Cache::spy();
-        $http = app(RefreshToken::class)(
+        $accessToken = app(RefreshToken::class)(
             'my_token',
             'https://example.com/oauth/token',
             'my_client_id',
@@ -129,7 +130,8 @@ class RefreshTokenTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(PendingRequest::class, $http);
+        $this->assertEquals('my_custom_access_token', $accessToken);
+        
         Http::assertSent(static function (Request $request) {
             return $request->url() === 'https://example.com/oauth/token' &&
                    $request['grant_type'] === 'client_credentials' &&
