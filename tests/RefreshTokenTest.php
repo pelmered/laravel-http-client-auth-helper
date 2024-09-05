@@ -12,7 +12,16 @@ class RefreshTokenTest extends TestCase
     public function testRefreshTokenBasic(): void
     {
         Cache::clear();
-        $accessToken = app(RefreshToken::class)('my_token', 'https://example.com/oauth/token', 'client_id', 'client_secret', ['scopes' => ['scope1', 'scope2']]);
+        $accessToken = app(RefreshToken::class)(
+            'my_token',
+            'https://example.com/oauth/token',
+            'client_id',
+            'client_secret',
+            [
+                'scopes' => ['scope1', 'scope2'],
+                'auth_type' => 'basic',
+            ]
+        );
 
         $this->assertEquals('this_is_my_access_token', $accessToken);
         Http::assertSent(static function (Request $request) {
