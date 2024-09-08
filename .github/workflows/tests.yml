@@ -36,6 +36,4 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ignore-platform-reqs
       - name: Execute tests
-        run: vendor/bin/phpunit --testsuite=default
-      - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/pest
