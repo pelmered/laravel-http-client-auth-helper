@@ -13,9 +13,9 @@ it('reads and stores a token in cache', function () {
     $accessToken = TokenStore::get(
         'https://example.com/oauth/token',
         new Credentials(
-            authType: Credentials::TYPE_BASIC,
             clientId: 'this_is_my_client_id',
             clientSecret: 'this_is_my_client_secret',
+            authType: Credentials::TYPE_BASIC,
         ),
         [
             'scopes' => ['scope1', 'scope2'],

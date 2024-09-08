@@ -39,7 +39,7 @@ final class AccessToken
 
     public function getExpiresIn(): int
     {
-        return (int) -round($this->expiresAt->diffInSeconds());
+        return (int) -round(Carbon::now()->diffInSeconds($this->expiresAt));
     }
 
     public function getHttpClient(PendingRequest $httpClient): PendingRequest
