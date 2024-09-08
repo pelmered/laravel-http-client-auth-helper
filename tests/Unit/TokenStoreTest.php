@@ -2,7 +2,6 @@
 
 uses(\Pelmered\LaravelHttpOAuthHelper\Tests\TestCase::class);
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\Credentials;
 use Pelmered\LaravelHttpOAuthHelper\TokenStore;

@@ -3,7 +3,6 @@
 namespace Pelmered\LaravelHttpOAuthHelper;
 
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
 class Credentials
@@ -20,6 +19,9 @@ class Credentials
 
     private ?\Closure $customCallback;
 
+    /**
+     * @param  array<string, mixed>  $credentials
+     */
     public function __construct(
         string|array|callable $credentials = [],
         protected ?string $token = null,
@@ -36,16 +38,11 @@ class Credentials
         if (empty($this->authType)) {
             $this->authType = self::TYPE_BASIC;
         }
-        /*
-        Arr::
-        Arr::of($this->credentials);
-        str();
-        Arr::
-        if ()
-            */
-
     }
 
+    /**
+     * @param  array<string, mixed>  $credentials
+     */
     public function parseCredentialsArray(string|array|callable $credentials): void
     {
         if (is_string($credentials)) {
@@ -54,7 +51,7 @@ class Credentials
             return;
         }
 
-        if (is_callable($credentials)) {
+        if ($credentials instanceof \Closure) {
             $this->authType       = self::TYPE_CUSTOM;
             $this->customCallback = $credentials;
 
@@ -83,39 +80,37 @@ class Credentials
         }
     }
 
-    /*
-     *
-            'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
-            'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
-            'custom' => $httpClient  = $options['apply_auth_token']($httpClient),
-     */
     public function addAuthToRequest(PendingRequest $httpClient): PendingRequest
     {
         if ($this->authType === self::TYPE_BODY) {
             return $httpClient;
         }
-        if ($this->authType === self::TYPE_BEARER) {
+        if ($this->authType === self::TYPE_BEARER && $this->token) {
             return $httpClient->withToken($this->token);
         }
         if ($this->authType === self::TYPE_BASIC) {
-            if (! $this->clientId || !$this->clientSecret) {
+            if (! $this->clientId || ! $this->clientSecret) {
                 throw new InvalidArgumentException('Basic auth requires client id and client secret. Check documentation/readme. ');
             }
 
             return $httpClient->withBasicAuth($this->clientId, $this->clientSecret);
         }
-        if ($this->authType === self::TYPE_QUERY) {
+        if ($this->authType === self::TYPE_QUERY && $this->token) {
             return $httpClient->withQueryParameters([
                 $this->tokenName => $this->token,
             ]);
         }
-        if ($this->authType === self::TYPE_CUSTOM) {
+        if ($this->authType === self::TYPE_CUSTOM && is_callable($this->customCallback)) {
             return ($this->customCallback)($httpClient);
         }
 
         return $httpClient;
     }
 
+    /**
+     * @param  array<string, string>  $requestBody
+     * @return array<string, string>
+     */
     public function addAuthToBody(array $requestBody): array
     {
         if ($this->authType !== self::TYPE_BODY) {

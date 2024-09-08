@@ -4,18 +4,28 @@ namespace Pelmered\LaravelHttpOAuthHelper;
 
 use Carbon\Carbon;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 
 final class AccessToken
 {
-    const TYPE_BEARER = 'Bearer';
-    const TYPE_QUERY = 'query';
-    const TYPE_CUSTOM = 'custom';
+    public const TYPE_BEARER = 'Bearer';
 
+    public const TYPE_QUERY = 'query';
 
+    public const TYPE_CUSTOM = 'custom';
 
+    protected string $tokenName = 'token';
 
-    public function __construct(protected string $accessToken, protected Carbon $expiresAt, protected string $tokenType = self::TYPE_BEARER) {}
+    public function __construct(
+        protected string $accessToken,
+        protected Carbon $expiresAt,
+        protected string $tokenType = self::TYPE_BEARER,
+        protected ?\Closure $customCallback = null
+    ) {
+        if ($tokenType === self::TYPE_CUSTOM && is_null($customCallback)) {
+            throw new InvalidArgumentException('customCallback must be set when using TYPE_CUSTOM');
+        }
+    }
 
     public function getAccessToken(): string
     {
@@ -32,26 +42,24 @@ final class AccessToken
         return (int) -round($this->expiresAt->diffInSeconds());
     }
 
-    public function getHttpClient(PendingRequest $httpClient)
+    public function getHttpClient(PendingRequest $httpClient): PendingRequest
     {
-        $this->tokenName = 'token';
 
         return match ($this->tokenType) {
             self::TYPE_BEARER => $httpClient->withToken($this->accessToken),
-
             self::TYPE_QUERY  => $httpClient->withQueryParameters([$this->tokenName => $this->accessToken]),
-            //self::TYPE_CUSTOM => $httpClient  = $options['apply_auth_token']($httpClient),
-
-
-            /*
-            'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
-            'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
-            */
-            //'custom' => $httpClient  = $options['apply_auth_token']($httpClient),
-
-            default  => throw new InvalidArgumentException('Invalid auth type')
+            self::TYPE_CUSTOM => $this->resolveCustomAuth($httpClient),
+            default           => throw new InvalidArgumentException('Invalid auth type')
         };
 
+    }
 
+    protected function resolveCustomAuth(PendingRequest $httpClient): PendingRequest
+    {
+        if (! is_callable($this->customCallback)) {
+            throw new InvalidArgumentException('customCallback must be callable');
+        }
+
+        return ($this->customCallback)($httpClient);
     }
 }

@@ -2,15 +2,22 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper;
 
+use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class TokenStore
 {
-    protected static function generateCacheKey($refreshUrl): string
+    protected static function generateCacheKey(string $refreshUrl): string
     {
-        return 'oauth_token_'.str($refreshUrl)->replace(['https://', '/'], [''])->__toString();
+        return 'oauth_token_'.Str::of($refreshUrl)->replace(['https://', '/'], [''])->__toString();
     }
 
+    /**
+     * @param  array<string, mixed>  $options
+     *
+     * @throws Exception
+     */
     public static function get(
         string $refreshUrl,
         Credentials $credentials,
@@ -25,12 +32,10 @@ class TokenStore
         }
 
         $accessToken = app(RefreshToken::class)(...func_get_args());
-        //$ttl         = $accessToken->getExpiresAt()->diffInSeconds(absolute: true);
         $ttl         = $accessToken->getExpiresIn();
 
-        //dd($cacheKey, $accessToken, $ttl);
         Cache::put($cacheKey, $accessToken, $ttl);
 
-            return $accessToken;
+        return $accessToken;
     }
 }

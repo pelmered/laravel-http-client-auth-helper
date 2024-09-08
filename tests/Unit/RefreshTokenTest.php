@@ -78,11 +78,11 @@ describe('Refresh Token Class', function () {
         expect($accessToken->getAccessToken())->toEqual('this_is_my_access_token_from_body_refresh_token');
         Http::assertSent(static function (Request $request) {
             //dd($request);
-            return $request->url()           === 'https://example.com/oauth/token'
-                   && $request['grant_type'] === 'password_credentials'
-                   && $request['scope']      === 'scope1 scope2'
-                   && $request['client_id']      === 'my_client_id'
-                   && $request['client_secret']      === 'my_client_secret';
+            return $request->url()              === 'https://example.com/oauth/token'
+                   && $request['grant_type']    === 'password_credentials'
+                   && $request['scope']         === 'scope1 scope2'
+                   && $request['client_id']     === 'my_client_id'
+                   && $request['client_secret'] === 'my_client_secret';
         });
     });
 
@@ -176,8 +176,8 @@ describe('Refresh Token Class', function () {
         $accessToken = app(RefreshToken::class)(
             'https://example.com/oauth/token',
             new Credentials([
-                    'my_client_id',
-                    'my_client_secret',
+                'my_client_id',
+                'my_client_secret',
             ]),
             [
                 'scopes'       => ['scope1', 'scope2'],
@@ -190,7 +190,7 @@ describe('Refresh Token Class', function () {
         expect($accessToken->getAccessToken())->toEqual('my_custom_access_token');
 
         Http::assertSent(static function (Request $request) {
-            return $request->url()           === 'https://example.com/oauth/token'
+            return $request->url() === 'https://example.com/oauth/token'
                    && $request->hasHeader('Authorization', 'Basic bXlfY2xpZW50X2lkOm15X2NsaWVudF9zZWNyZXQ=')
                    && $request['grant_type'] === 'client_credentials'
                    && $request['scope']      === 'scope1 scope2';

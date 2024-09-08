@@ -5,6 +5,7 @@ namespace Pelmered\LaravelHttpOAuthHelper;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
@@ -13,6 +14,9 @@ class RefreshToken
 {
     protected PendingRequest $httpClient;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $requestBody = [];
 
     /**
@@ -43,20 +47,7 @@ class RefreshToken
         $this->validateOptions($options);
         $this->resolveRefreshAuth($credentials);
 
-        //dd($credentials);
-
-        /*
-        match ($options['auth_type']) {
-            'basic'  => $httpClient->withBasicAuth($clientId, $clientSecret),
-            'body'   => $requestBody = $requestBody + ['client_id' => $clientId, 'client_secret' => $clientSecret],
-            'custom' => $httpClient  = $options['apply_auth_token']($httpClient),
-            default  => throw new InvalidArgumentException('Invalid auth type')
-        };
-        */
-
         $response = $this->httpClient->post($refreshUrl, $this->requestBody);
-
-        //dd($response, $response->json());
 
         return new AccessToken(
             accessToken: $this->getAccessTokenFromResponse($response, $options['access_token']),
@@ -66,25 +57,28 @@ class RefreshToken
         );
     }
 
-    protected function validateOptions($options): void
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    protected function validateOptions(array $options): void
     {
         Validator::make($options, [
             'auth_type' => 'in:basic,body,custom',
         ])->validate();
     }
 
-    protected function resolveRefreshAuth(Credentials $credentials)
+    protected function resolveRefreshAuth(Credentials $credentials): void
     {
         $this->httpClient  = $credentials->addAuthToRequest($this->httpClient);
         $this->requestBody = $credentials->addAuthToBody($this->requestBody);
     }
 
-    protected function getAccessTokenFromResponse($response, $accessTokenOption): string
+    protected function getAccessTokenFromResponse(Response $response, callable|string $accessTokenOption): string
     {
         return is_callable($accessTokenOption) ? $accessTokenOption($response) : $response->json()[$accessTokenOption];
     }
 
-    protected function getExpiresAtFromResponse($response, $expiresOption): Carbon
+    protected function getExpiresAtFromResponse(Response $response, callable|string|int|Carbon $expiresOption): Carbon
     {
         $expires = is_callable($expiresOption) ? $expiresOption($response) : $expiresOption;
 

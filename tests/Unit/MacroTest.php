@@ -41,7 +41,7 @@ test('macro with shorthand client credentials', function () {
         function (Request $request) {
             return $request->hasHeader('Authorization', 'Bearer this_is_my_access_token_from_body_refresh_token')
                    && $request->url() === 'https://example.com/api';
-        }
+        },
     ]);
 });
 test('macro with refresh token in credentials object', function () {
@@ -62,7 +62,7 @@ test('macro with refresh token in credentials object', function () {
         },
         function (Request $request) {
             return $request->hasHeader('Authorization', 'Bearer this_is_my_access_token_from_body_refresh_token') && $request->url() === 'https://example.com/api';
-        }
+        },
     ]);
 });
 
@@ -86,6 +86,6 @@ test('macro with client credentials in credentials object', function () {
         },
         function (Request $request) {
             return $request->url() === 'https://example.com/api?token=this_is_my_access_token_from_body_refresh_token';
-        }
+        },
     ]);
 });

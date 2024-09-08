@@ -21,8 +21,6 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
             array $options = [],
             string $tokenType = 'Bearer'
         ): PendingRequest {
-            //dd($credentials instanceof Credentials ? $credentials : new Credentials($credentials));
-
             $accessToken = TokenStore::get(
                 refreshUrl: $refreshUrl,
                 credentials: $credentials instanceof Credentials ? $credentials : new Credentials($credentials),
@@ -30,6 +28,7 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
                 tokenType: $tokenType,
             );
 
+            /** @var PendingRequest|Factory $httpClient */
             $httpClient = $this;
 
             // If we get a factory, we can create a new pending request
