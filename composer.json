@@ -48,12 +48,17 @@
     "scripts": {
         "phpstan": "vendor/bin/phpstan analyse src --level=8",
         "pint": "vendor/bin/pint",
+        "test": [
+            "@php vendor/bin/testbench package:test"
+        ],
         "lint": [
             "composer phpstan",
             "composer pint"
         ],
-        "test": [
-            "@php vendor/bin/testbench package:test"
+        "check": [
+            "composer phpstan",
+            "composer pint",
+            "composer test"
         ],
         "coverage": [
             "@php vendor/bin/phpunit --testsuite=default --coverage-clover=coverage.xml --coverage-filter=src --path-coverage"
