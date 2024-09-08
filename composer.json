@@ -33,7 +33,7 @@
         "phpstan/phpstan": "^1.10",
         "laravel/pint": "^1.0",
         "pestphp/pest": "^3.x-dev",
-        "pestphp/pest-plugin-mutate": "3.x-dev",
+        "pestphp/pest-plugin-mutate": "3.x-dev"
     },
     "extra": {
         "laravel": {
