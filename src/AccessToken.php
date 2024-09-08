@@ -44,14 +44,12 @@ final class AccessToken
 
     public function getHttpClient(PendingRequest $httpClient): PendingRequest
     {
-
         return match ($this->tokenType) {
             self::TYPE_BEARER => $httpClient->withToken($this->accessToken),
             self::TYPE_QUERY  => $httpClient->withQueryParameters([$this->tokenName => $this->accessToken]),
             self::TYPE_CUSTOM => $this->resolveCustomAuth($httpClient),
             default           => throw new InvalidArgumentException('Invalid auth type')
         };
-
     }
 
     protected function resolveCustomAuth(PendingRequest $httpClient): PendingRequest

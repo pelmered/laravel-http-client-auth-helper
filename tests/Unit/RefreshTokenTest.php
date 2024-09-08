@@ -9,7 +9,6 @@ use Pelmered\LaravelHttpOAuthHelper\Credentials;
 use Pelmered\LaravelHttpOAuthHelper\RefreshToken;
 
 describe('Refresh Token Class', function () {
-
     test('refresh token basic', function () {
         Cache::clear();
         $accessToken = app(RefreshToken::class)(
@@ -139,7 +138,6 @@ describe('Refresh Token Class', function () {
     });
 
     test('refresh token with expiry callback', function () {
-
         $accessToken = app(RefreshToken::class)(
             'https://example.com/oauth/token',
             new Credentials([
@@ -158,7 +156,6 @@ describe('Refresh Token Class', function () {
         Http::assertSent(static function (Request $request) {
             return $request->url() === 'https://example.com/oauth/token' && $request['grant_type'] === 'client_credentials' && $request['scope'] === 'scope1 scope2';
         });
-
     });
 
     test('get access token from custom key', function () {
@@ -213,5 +210,4 @@ describe('Refresh Token Class', function () {
             ]
         );
     });
-
 })->done(assignee: 'pelmered');

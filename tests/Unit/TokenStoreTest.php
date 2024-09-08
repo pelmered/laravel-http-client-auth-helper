@@ -8,7 +8,6 @@ use Pelmered\LaravelHttpOAuthHelper\Credentials;
 use Pelmered\LaravelHttpOAuthHelper\TokenStore;
 
 it('reads and stores a token in cache', function () {
-
     Cache::clear();
     Cache::spy();
 

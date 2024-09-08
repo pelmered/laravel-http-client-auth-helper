@@ -16,7 +16,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         Http::fake(
             static function (Request $request) {
-
                 if ($request->url() === 'https://example.com/oauth/token') {
                     if ($request->token = 'my_refresh_token') {
                         return Http::response([
