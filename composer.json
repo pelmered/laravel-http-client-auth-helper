@@ -34,7 +34,9 @@
         "orchestra/testbench": "^8.8 || ^9.0",
         "phpstan/phpstan": "^1.10",
         "nunomaduro/collision": "^7.6 || ^8.0",
-        "laravel/pint": "^1.0"
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^3.x-dev",
+        "pestphp/pest-plugin-mutate": "3.x-dev"
     },
     "extra": {
         "laravel": {
@@ -56,5 +58,10 @@
         "coverage": [
             "@php vendor/bin/phpunit --testsuite=default --coverage-clover=coverage.xml --coverage-filter=src --path-coverage"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

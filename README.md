@@ -21,6 +21,15 @@ Refreshes and caches access tokens automatically with minimal boilerplate code r
 - PHP 8.1 or higher
 - Laravel 10
 
+## Contributing
+
+See [Contribution Guide](.github/CONTRIBUTING.md) before sending pull requests.
+
+### Issues & Bug Reports
+
+When you are submitting issues, I appreciate if you could provide a failing test case. That makes my job a lot easier.\
+I will try to fix reported issues as soon as possible, but I do this in my spare time, so I might not be able to do it immediately.
+
 ## Installation
 
 ```bash

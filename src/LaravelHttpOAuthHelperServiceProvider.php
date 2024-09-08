@@ -2,8 +2,8 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper;
 
+use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,16 +13,31 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
     {
         Http::macro('withOAuthToken', function (
             string $refreshUrl,
-            string $clientId,
-            string $clientSecret,
+            string|array|Credentials $credentials = [
+                'refresh_token' => '',
+                'client_id'     => '',
+                'client_secret' => '',
+            ],
             array $options = [],
             string $tokenType = 'Bearer'
         ): PendingRequest {
-            $cacheKey = 'oauth_token_'.str($refreshUrl)->replace(['https://', '/'], [''])->__toString();
+            //dd($credentials instanceof Credentials ? $credentials : new Credentials($credentials));
 
-            $accessToken = Cache::get($cacheKey) ?? app(RefreshToken::class)($cacheKey, ...func_get_args());
+            $accessToken = TokenStore::get(
+                refreshUrl: $refreshUrl,
+                credentials: $credentials instanceof Credentials ? $credentials : new Credentials($credentials),
+                options: $options = [],
+                tokenType: $tokenType,
+            );
 
-            return Http::withToken($accessToken, $tokenType);
+            $httpClient = $this;
+
+            // If we get a factory, we can create a new pending request
+            if ($httpClient instanceof Factory) {
+                $httpClient = $httpClient->createPendingRequest();
+            }
+
+            return $accessToken->getHttpClient($httpClient);
         });
     }
 }

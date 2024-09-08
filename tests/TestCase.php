@@ -2,27 +2,52 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper\Tests;
 
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Pelmered\LaravelHttpOAuthHelper\LaravelHttpOAuthHelperServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Http::preventStrayRequests();
 
-        Http::fake([
-            'https://example.com/oauth/token' => Http::response([
-                'token_type'   => 'Bearer',
-                'access_token' => 'this_is_my_access_token',
-                'scope'        => 'scope1 scope2',
-                'expires_in'   => 7200,
-            ], 200),
-            'https://example.com/api' => Http::response([
-                'data' => 'some data',
-            ], 200),
-        ]);
+        Http::fake(
+            static function (Request $request) {
+
+                if ($request->url() === 'https://example.com/oauth/token') {
+                    if ($request->token = 'my_refresh_token') {
+                        return Http::response([
+                            'token_type'   => 'Bearer',
+                            'access_token' => 'this_is_my_access_token_from_body_refresh_token',
+                            'scope'        => implode(' ', $request->data()['scopes'] ?? []),
+                            'expires_in'   => 7200,
+                        ], 200);
+                    }
+
+                    if ($request->hasHeader('Authorization', 'Basic dXNlcjpwYXNzd29yZA==')) {
+                        return Http::response([
+                            'token_type'   => 'Bearer',
+                            'access_token' => 'this_is_my_access_token_from_basic_auth',
+                            'scope'        => 'scope1 scope2',
+                            'expires_in'   => 7200,
+                        ], 200);
+                    }
+                }
+
+                if ($request->url() === 'https://example.com/api') {
+                    return Http::response([
+                        'data' => 'some data',
+                    ], 200);
+                }
+
+                return Http::response([], 200);
+            }
+        );
+
+        Cache::spy();
     }
 
     protected function getPackageProviders($app): array
