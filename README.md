@@ -1,3 +1,5 @@
+
+
 # Laravel HTTP Client Auth helper
 
 An easy-to-use helper for Laravel HTTP Client to make manage API requests with a two-step auth flow. 
@@ -85,6 +87,31 @@ $response = Http::withRefreshToken(
     'access_token' => 'access_token', // Key for the access token in the response JSON
   ],
   'Bearer'
+)->get(
+  'https://example.com/api',
+);
+```
+
+For full type safety, you can also provide objects instead of arrays:
+```php
+use Pelmered\LaravelHttpOAuthHelper\AccessToken;
+use Pelmered\LaravelHttpOAuthHelper\Credentials;
+use Pelmered\LaravelHttpOAuthHelper\Options;
+use Pelmered\LaravelHttpOAuthHelper\RefreshToken;
+
+$response = Http::withRefreshToken(
+  'https://example.com/token.oauth2',
+  new Credentials(
+    clientId: 'client_id',
+    clientSecret: 'client_secret',
+    authType: Credentials::AUTH_TYPE_BODY,
+  ),
+  new Options(
+    scopes: ['scope1', 'scope2'],
+    expires: 3600,
+    grantType: 'password_credentials',
+    tokenType: AccessToken::TYPE_BEARER
+  ),
 )->get(
   'https://example.com/api',
 );

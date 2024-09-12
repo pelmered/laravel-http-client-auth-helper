@@ -28,19 +28,6 @@ class RefreshToken
         Credentials $credentials,
         Options $options,
     ): AccessToken {
-
-        //TODO: Refactor $options
-
-        //dd($options);
-        /*
-        $options = array_merge([
-            'scopes'       => [],
-            'auth_type'    => 'body',
-            'expires'      => 3600,
-            'access_token' => 'access_token',
-        ], $options);
-        */
-
         $this->httpClient = Http::asForm();
 
         $this->requestBody = [
