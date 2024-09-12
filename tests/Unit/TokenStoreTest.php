@@ -5,6 +5,7 @@ uses(\Pelmered\LaravelHttpOAuthHelper\Tests\TestCase::class);
 use Illuminate\Support\Facades\Cache;
 use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\Credentials;
+use Pelmered\LaravelHttpOAuthHelper\Options;
 use Pelmered\LaravelHttpOAuthHelper\TokenStore;
 
 it('reads and stores a token in cache', function () {
@@ -18,12 +19,11 @@ it('reads and stores a token in cache', function () {
         new Credentials(
             clientId: 'this_is_my_client_id',
             clientSecret: 'this_is_my_client_secret',
-            authType: Credentials::TYPE_BASIC,
+            authType: Credentials::AUTH_TYPE_BASIC,
         ),
-        [
-            'scopes' => ['scope1', 'scope2'],
-        ],
-        AccessToken::TYPE_QUERY
+        new Options(
+            scopes: ['scope1', 'scope2'],
+        ),
     );
 
     // Does not work with composer update --prefer-lowest

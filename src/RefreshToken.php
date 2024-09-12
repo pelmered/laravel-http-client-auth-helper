@@ -27,45 +27,42 @@ class RefreshToken
     public function __invoke(
         string $refreshUrl,
         Credentials $credentials,
-        array $options = [],
-        string $tokenType = AccessToken::TYPE_BEARER
+        Options $options,
     ): AccessToken {
+
+        //TODO: Refactor $options
+
+        //dd($options);
+        /*
         $options = array_merge([
             'scopes'       => [],
             'auth_type'    => 'body',
             'expires'      => 3600,
             'access_token' => 'access_token',
         ], $options);
+        */
 
         $this->httpClient = Http::asForm();
 
         $this->requestBody = [
-            'grant_type' => $options['grant_type'] ?? 'client_credentials',
-            'scope'      => implode(' ', $options['scopes']),
+            'grant_type' => $options->grantType,
+            'scope'      => $options->getScopes(),
         ];
 
-        $this->validateOptions($options);
         $this->resolveRefreshAuth($credentials);
 
         $response = $this->httpClient->post($refreshUrl, $this->requestBody);
 
         return new AccessToken(
-            accessToken: $this->getAccessTokenFromResponse($response, $options['access_token']),
-            expiresAt: $this->getExpiresAtFromResponse($response, $options['expires']),
+            accessToken: $this->getAccessTokenFromResponse($response, $options->accessToken),
+            expiresAt: $this->getExpiresAtFromResponse($response, $options->expires),
             //tokenType: $options['auth_type'],
-            tokenType: $tokenType,
+            tokenType: $options->tokenType,
+            customCallback: $options->tokenTypeCustomCallback,
         );
     }
 
-    /**
-     * @param  array<string, mixed>  $options
-     */
-    protected function validateOptions(array $options): void
-    {
-        Validator::make($options, [
-            'auth_type' => 'in:basic,body,custom',
-        ])->validate();
-    }
+
 
     protected function resolveRefreshAuth(Credentials $credentials): void
     {
@@ -83,11 +80,15 @@ class RefreshToken
         $expires = is_callable($expiresOption) ? $expiresOption($response) : $expiresOption;
 
         if (is_string($expires)) {
+            if (isset($response->json()[$expires])) {
+                $expires = $response->json()[$expires];
+            }
+
             return Carbon::parse($expires)->subMinute();
         }
 
         if (is_int($expires)) {
-            return Carbon::now()->addSeconds($expires - 60);
+            return Carbon::now()->addSeconds($expires)->subMinute();
         }
 
         if ($expires instanceof Carbon) {

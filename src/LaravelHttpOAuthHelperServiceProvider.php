@@ -11,21 +11,19 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Http::macro('withOAuthToken', function (
+        Http::macro('withRefreshToken', function (
             string $refreshUrl,
             string|array|Credentials $credentials = [
                 'refresh_token' => '',
                 'client_id'     => '',
                 'client_secret' => '',
             ],
-            array $options = [],
-            string $tokenType = 'Bearer'
+            array|Options $options = [],
         ): PendingRequest {
             $accessToken = TokenStore::get(
                 refreshUrl: $refreshUrl,
                 credentials: $credentials instanceof Credentials ? $credentials : new Credentials($credentials),
-                options: $options = [],
-                tokenType: $tokenType,
+                options: $options instanceof Options ? $options : Options::make($options),
             );
 
             /** @var PendingRequest|Factory $httpClient */

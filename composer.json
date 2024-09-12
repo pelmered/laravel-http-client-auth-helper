@@ -1,5 +1,5 @@
 {
-    "name": "pelmered/laravel-http-oauth-helper",
+    "name": "pelmered/laravel-http-client-auth-helper",
     "type": "library",
     "license": "MIT",
     "autoload": {

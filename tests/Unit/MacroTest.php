@@ -8,7 +8,7 @@ use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\Credentials;
 
 test('macro with shorthand refresh token', function () {
-    $response = Http::withOAuthToken(
+    $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         ['my_refresh_token'],
         ['scopes' => ['scope1', 'scope2']],
@@ -23,7 +23,7 @@ test('macro with shorthand refresh token', function () {
     });
 });
 test('macro with shorthand client credentials', function () {
-    $response = Http::withOAuthToken(
+    $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         [
             'my_client_id', 'my_client_secret',
@@ -45,11 +45,11 @@ test('macro with shorthand client credentials', function () {
     ]);
 });
 test('macro with refresh token in credentials object', function () {
-    $response = Http::withOAuthToken(
+    $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         new Credentials(
             token: 'this_is_my_refresh_token',
-            authType: Credentials::TYPE_BEARER,
+            authType: Credentials::AUTH_TYPE_BEARER,
         ),
         ['scopes' => ['scope1', 'scope2']]
     )->get('https://example.com/api');
@@ -67,22 +67,23 @@ test('macro with refresh token in credentials object', function () {
 });
 
 test('macro with client credentials in credentials object', function () {
-    $response = Http::withOAuthToken(
+    $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         new Credentials(
-            authType: Credentials::TYPE_BASIC,
+            authType: Credentials::AUTH_TYPE_BASIC,
             clientId: 'this_is_my_client_id',
             clientSecret: 'this_is_my_client_secret',
         ),
         [
             'scopes' => ['scope1', 'scope2'],
+            'tokenType' => AccessToken::TYPE_QUERY
         ],
-        AccessToken::TYPE_QUERY
     )->get('https://example.com/api');
 
     Http::assertSentInOrder([
         function (Request $request) {
-            return $request->hasHeader('Authorization', 'Basic dGhpc19pc19teV9jbGllbnRfaWQ6dGhpc19pc19teV9jbGllbnRfc2VjcmV0') && $request->url() === 'https://example.com/oauth/token';
+            return $request->hasHeader('Authorization', 'Basic dGhpc19pc19teV9jbGllbnRfaWQ6dGhpc19pc19teV9jbGllbnRfc2VjcmV0')
+                   && $request->url() === 'https://example.com/oauth/token';
         },
         function (Request $request) {
             return $request->url() === 'https://example.com/api?token=this_is_my_access_token_from_body_refresh_token';

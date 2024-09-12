@@ -23,7 +23,7 @@ final class AccessToken
         protected ?\Closure $customCallback = null
     ) {
         if ($tokenType === self::TYPE_CUSTOM && is_null($customCallback)) {
-            throw new InvalidArgumentException('customCallback must be set when using TYPE_CUSTOM');
+            throw new InvalidArgumentException('customCallback must be set when using AUTH_TYPE_CUSTOM');
         }
     }
 

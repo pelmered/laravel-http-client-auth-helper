@@ -14,15 +14,12 @@ class TokenStore
     }
 
     /**
-     * @param  array<string, mixed>  $options
-     *
      * @throws Exception
      */
     public static function get(
         string $refreshUrl,
         Credentials $credentials,
-        array $options = [],
-        string $tokenType = 'Bearer',
+        Options $options,
     ): AccessToken {
         $cacheKey    = static::generateCacheKey($refreshUrl);
         $accessToken = Cache::get($cacheKey);

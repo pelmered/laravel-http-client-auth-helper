@@ -3,19 +3,29 @@
 namespace Pelmered\LaravelHttpOAuthHelper;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class Credentials
 {
-    const TYPE_BODY = 'body';
+    public const AUTH_TYPE_BODY = 'body';
 
-    const TYPE_QUERY = 'query';
+    public const AUTH_TYPE_QUERY = 'query';
 
-    const TYPE_BASIC = 'basic';
+    public const AUTH_TYPE_BASIC = 'basic';
 
-    const TYPE_BEARER = 'bearer';
+    public const AUTH_TYPE_BEARER = 'Bearer';
 
-    const TYPE_CUSTOM = 'custom';
+    public const AUTH_TYPE_CUSTOM = 'custom';
+
+
+    public const GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
+    public const GRANT_TYPE_PASSWORD_CREDENTIALS = 'password_credentials';
+
+    //TODO: Add support for authorization_code and implicit grants
+    public const GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
+    public const GRANT_TYPE_IMPLICIT = 'implicit';
 
     private ?\Closure $customCallback;
 
@@ -36,8 +46,18 @@ class Credentials
 
         // Which auth type should be default?
         if (empty($this->authType)) {
-            $this->authType = self::TYPE_BASIC;
+            $this->authType = self::AUTH_TYPE_BASIC;
         }
+
+        //$this->validate();
+    }
+
+    protected function validate( ): void
+    {
+        Validator::make((array)$this, [
+            'grantType' => Rule::in([self::GRANT_TYPE_CLIENT_CREDENTIALS, self::GRANT_TYPE_PASSWORD_CREDENTIALS]),
+            'authType'  => Rule::in([self::AUTH_TYPE_BEARER, self::AUTH_TYPE_BODY, self::AUTH_TYPE_QUERY, self::AUTH_TYPE_BASIC, self::AUTH_TYPE_CUSTOM]),
+        ])->validate();
     }
 
     /**
@@ -52,7 +72,7 @@ class Credentials
         }
 
         if ($credentials instanceof \Closure) {
-            $this->authType       = self::TYPE_CUSTOM;
+            $this->authType       = self::AUTH_TYPE_CUSTOM;
             $this->customCallback = $credentials;
 
             return;
@@ -82,25 +102,25 @@ class Credentials
 
     public function addAuthToRequest(PendingRequest $httpClient): PendingRequest
     {
-        if ($this->authType === self::TYPE_BODY) {
+        if ($this->authType === self::AUTH_TYPE_BODY) {
             return $httpClient;
         }
-        if ($this->authType === self::TYPE_BEARER && $this->token) {
+        if ($this->authType === self::AUTH_TYPE_BEARER && $this->token) {
             return $httpClient->withToken($this->token);
         }
-        if ($this->authType === self::TYPE_BASIC) {
+        if ($this->authType === self::AUTH_TYPE_BASIC) {
             if (! $this->clientId || ! $this->clientSecret) {
                 throw new InvalidArgumentException('Basic auth requires client id and client secret. Check documentation/readme. ');
             }
 
             return $httpClient->withBasicAuth($this->clientId, $this->clientSecret);
         }
-        if ($this->authType === self::TYPE_QUERY && $this->token) {
+        if ($this->authType === self::AUTH_TYPE_QUERY && $this->token) {
             return $httpClient->withQueryParameters([
                 $this->tokenName => $this->token,
             ]);
         }
-        if ($this->authType === self::TYPE_CUSTOM && is_callable($this->customCallback)) {
+        if ($this->authType === self::AUTH_TYPE_CUSTOM && is_callable($this->customCallback)) {
             return ($this->customCallback)($httpClient);
         }
 
@@ -113,7 +133,7 @@ class Credentials
      */
     public function addAuthToBody(array $requestBody): array
     {
-        if ($this->authType !== self::TYPE_BODY) {
+        if ($this->authType !== self::AUTH_TYPE_BODY) {
             return $requestBody;
         }
         if ($this->clientId && $this->clientSecret) {
@@ -130,7 +150,7 @@ class Credentials
     {
         $this->token = $token;
         if (empty($this->authType)) {
-            $this->authType = self::TYPE_BEARER;
+            $this->authType = self::AUTH_TYPE_BEARER;
         }
     }
 
@@ -144,7 +164,7 @@ class Credentials
         }
 
         if (empty($this->authType)) {
-            $this->authType = self::TYPE_BASIC;
+            $this->authType = self::AUTH_TYPE_BASIC;
         }
     }
 }
