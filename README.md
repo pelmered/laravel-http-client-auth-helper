@@ -11,7 +11,7 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 - Extends the Laravel HTTP Client to make it straightforward to use. Se the [usage section](#usage) below for examples. 
 - Supports common auth flows like OAuth2 and refresh tokens with most grant types.
 
-**Note: the API is not yet stable and the documentation is in the process of being updated. I hope I can release a version 1 soon. **
+#### Note: the API is not yet stable and the documentation is in the process of being updated. I hope I can release a version 1 soon.
 
 [![Latest Stable Version](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/v/stable)](https://packagist.org/packages/pelmered/laravel-http-client-auth-helper)
 [![Total Downloads](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/d/total)](//packagist.org/packages/pelmered/laravel-http-client-auth-helper)
