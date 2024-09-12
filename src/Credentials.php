@@ -62,7 +62,7 @@ class Credentials
     }
 
     /**
-     * @param  array<string, mixed>  $credentials
+     * @param  string|array<string, mixed>|callable  $credentials
      */
     public function parseCredentialsArray(string|array|callable $credentials): void
     {
