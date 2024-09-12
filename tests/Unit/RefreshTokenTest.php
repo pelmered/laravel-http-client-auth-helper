@@ -174,8 +174,8 @@ describe('Refresh Token Class', function () {
                 'my_client_secret',
             ]),
             new Options(
-                scopes:       ['scope1', 'scope2'],
-                accessToken:  static function ($response) {
+                scopes: ['scope1', 'scope2'],
+                accessToken: static function ($response) {
                     return $response->json()['custom_access_token'];
                 },
             ),
