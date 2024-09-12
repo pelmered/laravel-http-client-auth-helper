@@ -19,12 +19,13 @@ class Credentials
 
     public const AUTH_TYPE_CUSTOM = 'custom';
 
-
     public const GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
+
     public const GRANT_TYPE_PASSWORD_CREDENTIALS = 'password_credentials';
 
     //TODO: Add support for authorization_code and implicit grants
     public const GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
+
     public const GRANT_TYPE_IMPLICIT = 'implicit';
 
     private ?\Closure $customCallback;
@@ -52,9 +53,9 @@ class Credentials
         //$this->validate();
     }
 
-    protected function validate( ): void
+    protected function validate(): void
     {
-        Validator::make((array)$this, [
+        Validator::make((array) $this, [
             'grantType' => Rule::in([self::GRANT_TYPE_CLIENT_CREDENTIALS, self::GRANT_TYPE_PASSWORD_CREDENTIALS]),
             'authType'  => Rule::in([self::AUTH_TYPE_BEARER, self::AUTH_TYPE_BODY, self::AUTH_TYPE_QUERY, self::AUTH_TYPE_BASIC, self::AUTH_TYPE_CUSTOM]),
         ])->validate();

@@ -7,7 +7,6 @@ use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 
 class RefreshToken
@@ -61,8 +60,6 @@ class RefreshToken
             customCallback: $options->tokenTypeCustomCallback,
         );
     }
-
-
 
     protected function resolveRefreshAuth(Credentials $credentials): void
     {

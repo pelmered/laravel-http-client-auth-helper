@@ -115,7 +115,7 @@ describe('Refresh Token Class', function () {
             new Credentials([
                 'my_client_id',
                 'my_client_secret',
-                Credentials::AUTH_TYPE_BODY
+                Credentials::AUTH_TYPE_BODY,
             ]),
             new Options(
                 scopes: ['scope1', 'scope2'],
