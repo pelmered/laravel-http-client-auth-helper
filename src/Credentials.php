@@ -72,9 +72,9 @@ class Credentials
             return;
         }
 
-        if ($credentials instanceof \Closure) {
+        if (is_callable($credentials)) {
             $this->authType       = self::AUTH_TYPE_CUSTOM;
-            $this->customCallback = $credentials;
+            $this->customCallback = $credentials(...);
 
             return;
         }

@@ -19,8 +19,6 @@ class RefreshToken
     protected array $requestBody = [];
 
     /**
-     * @param  array<string, mixed>  $options
-     *
      * @throws Exception
      */
     public function __invoke(

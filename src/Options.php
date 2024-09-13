@@ -7,6 +7,9 @@ use Illuminate\Validation\Rule;
 
 class Options
 {
+    /**
+     * @param  array<string>  $scopes
+     */
     final public function __construct(
         public array $scopes = [],
         public string $grantType = 'client_credentials',
@@ -18,9 +21,6 @@ class Options
         $this->validateOptions();
     }
 
-    /**
-     * @param  array<string, mixed>  $options
-     */
     protected function validateOptions(): void
     {
         Validator::make((array) $this, [
@@ -33,6 +33,9 @@ class Options
         return implode(' ', $this->scopes);
     }
 
+    /**
+     * @param  array<string, mixed>  ...$parameters
+     */
     public static function make(...$parameters): static
     {
         $defaults = static::getDefaults();
@@ -41,6 +44,9 @@ class Options
         return new static(...$options);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected static function getDefaults(): array
     {
         return [
