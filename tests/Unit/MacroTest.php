@@ -18,11 +18,11 @@ test('macro with shorthand refresh token', function () {
         ->with('test', '', \Closure::class)
         ->andReturn('');
 
-    Http::assertSent(function (Request $request) {
+    Http::assertSent(static function (Request $request) {
         return $request->hasHeader('Authorization', 'Bearer this_is_my_access_token_from_body_refresh_token') && $request->url() === 'https://example.com/api';
     });
 });
-test('macro with shorthand client credentials', function () {
+test('macro with shorthand client credentials',  function () {
     $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         [
@@ -44,14 +44,16 @@ test('macro with shorthand client credentials', function () {
         },
     ]);
 });
-test('macro with refresh token in credentials object', function () {
+test('macro with refresh token in credentials object',  function () {
     $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         new Credentials(
             token: 'this_is_my_refresh_token',
-            authType: Credentials::AUTH_TYPE_BEARER,
         ),
-        ['scopes' => ['scope1', 'scope2']]
+        [
+            'scopes' => ['scope1', 'scope2'],
+            'authType' => Credentials::AUTH_TYPE_BEARER,
+        ]
     )->get('https://example.com/api');
 
     expect($response->json()['data'])->toBe('some data');
@@ -66,17 +68,17 @@ test('macro with refresh token in credentials object', function () {
     ]);
 });
 
-test('macro with client credentials in credentials object', function () {
+test('macro with client credentials in credentials object',  function () {
     $response = Http::withRefreshToken(
         'https://example.com/oauth/token',
         new Credentials(
-            authType: Credentials::AUTH_TYPE_BASIC,
             clientId: 'this_is_my_client_id',
             clientSecret: 'this_is_my_client_secret',
         ),
         [
             'scopes'    => ['scope1', 'scope2'],
             'tokenType' => AccessToken::TYPE_QUERY,
+            'authType'  => Credentials::AUTH_TYPE_BASIC,
         ],
     )->get('https://example.com/api');
 

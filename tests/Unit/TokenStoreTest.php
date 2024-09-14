@@ -18,10 +18,10 @@ it('reads and stores a token in cache', function () {
         new Credentials(
             clientId: 'this_is_my_client_id',
             clientSecret: 'this_is_my_client_secret',
-            authType: Credentials::AUTH_TYPE_BASIC,
         ),
         new Options(
             scopes: ['scope1', 'scope2'],
+            authType: Credentials::AUTH_TYPE_BASIC,
         ),
     );
 

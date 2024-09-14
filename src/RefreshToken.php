@@ -33,7 +33,7 @@ class RefreshToken
             'scope'      => $options->getScopes(),
         ];
 
-        $this->resolveRefreshAuth($credentials);
+        $this->resolveRefreshAuth($credentials, $options);
 
         $response = $this->httpClient->post($refreshUrl, $this->requestBody);
 
@@ -46,10 +46,10 @@ class RefreshToken
         );
     }
 
-    protected function resolveRefreshAuth(Credentials $credentials): void
+    protected function resolveRefreshAuth(Credentials $credentials, Options $options): void
     {
-        $this->httpClient  = $credentials->addAuthToRequest($this->httpClient);
-        $this->requestBody = $credentials->addAuthToBody($this->requestBody);
+        $this->httpClient  = $credentials->addAuthToRequest($this->httpClient, $options);
+        $this->requestBody = $credentials->addAuthToBody($this->requestBody, $options);
     }
 
     protected function getAccessTokenFromResponse(Response $response, callable|string $accessTokenOption): string

@@ -40,10 +40,10 @@ describe('Refresh Token Class', function () {
             'https://example.com/oauth/token',
             new Credentials(
                 'my_refresh_token',
-                authType: Credentials::AUTH_TYPE_BODY
             ),
             new Options(
                 scopes: ['scope1', 'scope2'],
+                authType: Credentials::AUTH_TYPE_BODY,
                 grantType: 'password_credentials',
             ),
         );
@@ -65,11 +65,11 @@ describe('Refresh Token Class', function () {
                 'my_client_id',
                 'my_client_secret',
             ],
-                authType: Credentials::AUTH_TYPE_BODY
             ),
             new Options(
                 scopes: ['scope1', 'scope2'],
-                grantType: 'password_credentials',
+                authType: Credentials::AUTH_TYPE_BODY,
+                grantType: 'password_credentials'
             ),
         );
 
@@ -115,10 +115,10 @@ describe('Refresh Token Class', function () {
             new Credentials([
                 'my_client_id',
                 'my_client_secret',
-                Credentials::AUTH_TYPE_BODY,
             ]),
             new Options(
                 scopes: ['scope1', 'scope2'],
+                authType: Credentials::AUTH_TYPE_BODY,
                 expires: 300,
             ),
         );

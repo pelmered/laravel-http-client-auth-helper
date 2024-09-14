@@ -20,10 +20,14 @@ class LaravelHttpOAuthHelperServiceProvider extends ServiceProvider
             ],
             array|Options $options = [],
         ): PendingRequest {
+
+            $options     = $options instanceof Options ? $options : Options::make($options);
+            $credentials = $credentials instanceof Credentials ? $credentials : new Credentials($credentials);
+
             $accessToken = TokenStore::get(
                 refreshUrl: $refreshUrl,
-                credentials: $credentials instanceof Credentials ? $credentials : new Credentials($credentials),
-                options: $options instanceof Options ? $options : Options::make($options),
+                credentials: $credentials->setOptions($options),
+                options: $options,
             );
 
             /** @var PendingRequest|Factory $httpClient */
