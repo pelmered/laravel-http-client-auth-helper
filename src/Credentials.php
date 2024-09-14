@@ -115,6 +115,11 @@ class Credentials
 
         }
         if ($this->token) {
+            if ($options->authType === self::AUTH_TYPE_QUERY) {
+                return $httpClient->withQueryParameters([
+                    $options->tokenName => $this->token,
+                ]);
+            }
             return $httpClient->withToken($this->token, $options->authType);
         }
         if ($options->authType === self::AUTH_TYPE_BASIC) {
@@ -123,11 +128,6 @@ class Credentials
             }
 
             return $httpClient->withBasicAuth($this->clientId, $this->clientSecret);
-        }
-        if ($options->authType === self::AUTH_TYPE_QUERY && $this->token) {
-            return $httpClient->withQueryParameters([
-                $options->tokenName => $this->token,
-            ]);
         }
         if ($options->authType === self::AUTH_TYPE_CUSTOM && is_callable($this->customCallback)) {
             return ($this->customCallback)($httpClient);
