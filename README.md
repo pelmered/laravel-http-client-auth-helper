@@ -15,6 +15,18 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 
 #### Note: the API is not yet stable and the documentation is in the process of being updated. I hope I can release a version 1 soon.
 
+#### TODO before stable 1.0.0 version:
+- Define a stable API
+- Set good defaults
+  - Auth type: Basic or bearer?
+  - Expires option
+  - Credential token key
+  - Access token key
+- Improve data validation and error messages
+- Write/update readme
+- Maybe: add more tests
+- Maybe: Add support for authorization_code and implicit grants
+
 [![Latest Stable Version](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/v/stable)](https://packagist.org/packages/pelmered/laravel-http-client-auth-helper)
 [![Total Downloads](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/d/total)](//packagist.org/packages/pelmered/laravel-http-client-auth-helper)
 [![Monthly Downloads](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/d/monthly)](//packagist.org/packages/pelmered/laravel-http-client-auth-helper)
