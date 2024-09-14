@@ -33,8 +33,10 @@
         "phpstan/phpstan": "^1.10",
         "laravel/pint": "^1.0",
         "pestphp/pest": "^3.x-dev",
-        "pestphp/pest-plugin-mutate": "3.x-dev",
-        "spatie/laravel-ray": "^1.37.1"
+        "pestphp/pest-plugin-mutate": "^3.x-dev",
+        "pestphp/pest-plugin-type-coverage": "^3.0.0",
+        "spatie/laravel-ray": "^1.37.1",
+        "phpmd/phpmd": "^2.15"
     },
     "extra": {
         "laravel": {
@@ -51,15 +53,19 @@
         ],
         "lint": [
             "composer phpstan",
-            "composer pint"
+            "composer pint",
+            "composer type"
         ],
         "check": [
-            "composer phpstan",
             "composer pint",
-            "composer test"
+            "composer phpstan",
+            "composer test --min=100"
         ],
         "coverage": [
             "@php vendor/bin/phpunit --testsuite=default --coverage-clover=coverage.xml --coverage-filter=src --path-coverage"
+        ],
+        "type": [
+            "@php vendor/bin/pest --type-coverage"
         ]
     },
     "config": {
