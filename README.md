@@ -24,6 +24,7 @@ This helper takes care of all the headaches and boilerplate code with a simple a
   - Access token key
 - Improve data validation and error messages
 - Write/update readme
+- Make the cache store configurable
 - Maybe: add more tests
 - Maybe: Add support for authorization_code and implicit grants
 
@@ -116,13 +117,13 @@ $response = Http::withRefreshToken(
   new Credentials(
     clientId: 'client_id',
     clientSecret: 'client_secret',
-    authType: Credentials::AUTH_TYPE_BODY,
   ),
   new Options(
     scopes: ['scope1', 'scope2'],
     expires: 3600,
     grantType: 'password_credentials',
-    tokenType: AccessToken::TYPE_BEARER
+    authType: Credentials::AUTH_TYPE_BODY,
+    tokenType: AccessToken::TYPE_BEARER,
   ),
 )->get(
   'https://example.com/api',
@@ -170,9 +171,9 @@ $response = Http::withRefreshToken(
 
 For more examples, check out the [Macro tests](tests/Unit/MacroTest.php).
 
-### Tips
+### Integration tips
 
-If you use the same token on multiple places you can create the client only once and save it. For example:
+If you use the same token in multiple places, you can create the client only once and save it. For example:
 ```php
 $this->client = Http::withRefreshToken(
   'https://example.com/token.oauth2',
@@ -185,8 +186,7 @@ $this->client = Http::withRefreshToken(
   ]
 )->baseUrl('https://example.com/api');
 ```
-
-to use it later like:
+to use it later like this:
 ```php
 $this->client->get('posts');
 
@@ -205,7 +205,7 @@ $this->app->singleton('my-oauth-client', function ($app) {
   return Http::withRefreshToken(
     'https://example.com/token.oauth2',
     [
-     'client_id',
+      'client_id',
       'client_secret',
     ],
     [
@@ -214,8 +214,7 @@ $this->app->singleton('my-oauth-client', function ($app) {
   )->baseUrl('https://example.com/api');
 });
 ```
-
-Then use it like:
+and then use it anywhere like this:
 ```php
 app('my-oauth-client')->get('posts');
 ```
