@@ -3,6 +3,7 @@
 namespace Pelmered\LaravelHttpOAuthHelper;
 
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Http\Client\PendingRequest;
 use InvalidArgumentException;
 
@@ -20,7 +21,7 @@ final class AccessToken
         protected string $accessToken,
         protected Carbon $expiresAt,
         protected string $tokenType = self::TYPE_BEARER,
-        protected ?\Closure $customCallback = null
+        protected ?Closure $customCallback = null
     ) {
         if ($tokenType === self::TYPE_CUSTOM && is_null($customCallback)) {
             throw new InvalidArgumentException('customCallback must be set when using AUTH_TYPE_CUSTOM');

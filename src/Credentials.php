@@ -2,6 +2,7 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper;
 
+use Closure;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -28,7 +29,7 @@ class Credentials
 
     public const GRANT_TYPE_IMPLICIT = 'implicit';
 
-    private ?\Closure $customCallback;
+    private ?Closure $customCallback;
 
     /**
      * @param  array<string, mixed>  $credentials
@@ -38,26 +39,25 @@ class Credentials
         protected ?string $token = null,
         protected ?string $clientId = null,
         protected ?string $clientSecret = null,
-        protected string $authType = '',
+        protected string $authType = self::AUTH_TYPE_BASIC, //TODO: Which auth type should be default?
         protected string $tokenName = 'token'
     ) {
         if (! empty($credentials)) {
             $this->parseCredentialsArray($credentials);
         }
 
-        // Which auth type should be default?
-        if (empty($this->authType)) {
-            $this->authType = self::AUTH_TYPE_BASIC;
-        }
+        $this->validate();
+    }
 
-        //$this->validate();
+    public function toArray(): array
+    {
+        return get_object_vars($this);
     }
 
     protected function validate(): void
     {
-        Validator::make((array) $this, [
-            'grantType' => Rule::in([self::GRANT_TYPE_CLIENT_CREDENTIALS, self::GRANT_TYPE_PASSWORD_CREDENTIALS]),
-            'authType'  => Rule::in([self::AUTH_TYPE_BEARER, self::AUTH_TYPE_BODY, self::AUTH_TYPE_QUERY, self::AUTH_TYPE_BASIC, self::AUTH_TYPE_CUSTOM]),
+        Validator::make($this->toArray(), [
+            'authType' => Rule::in([self::AUTH_TYPE_BEARER, self::AUTH_TYPE_BODY, self::AUTH_TYPE_QUERY, self::AUTH_TYPE_BASIC, self::AUTH_TYPE_CUSTOM]),
         ])->validate();
     }
 
@@ -144,7 +144,7 @@ class Credentials
             return $requestBody + [$this->tokenName => $this->token];
         }
 
-        throw new InvalidArgumentException('Invalid credentials. Check documentation/readme. ');
+        throw new InvalidArgumentException('Invalid credentials. Check documentation/readme.');
     }
 
     public function setRefreshToken(string $token): void
