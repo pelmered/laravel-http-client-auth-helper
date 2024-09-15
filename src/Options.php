@@ -41,7 +41,9 @@ class Options
 
     protected function validateOptions(): void
     {
+        // Note: closures can't be checked at this point since we don't have access to the response objects
         Validator::make((array) $this, [
+            'scopes.*' => 'string',
             'authType' => Rule::in([
                 Credentials::AUTH_TYPE_BEARER,
                 Credentials::AUTH_TYPE_BODY,
@@ -58,6 +60,7 @@ class Options
                 AccessToken::TYPE_QUERY,
                 AccessToken::TYPE_CUSTOM,
             ]),
+            'tokenName' => 'string',
         ])->validate();
     }
 

@@ -22,7 +22,7 @@ This helper takes care of all the headaches and boilerplate code with a simple a
   - Expires option
   - Credential token key
   - Access token key
-- Improve data validation and error messages
+~~- Improve data validation and error messages~~
 - Write/update readme
 - Make the cache store configurable
 - Maybe: add more tests

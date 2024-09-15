@@ -158,9 +158,11 @@ class Credentials
     public function setRefreshToken(string $token): void
     {
         $this->token = $token;
+        /*
         if (empty($this->options->authType)) {
-            //$this->options->authType = self::AUTH_TYPE_BEARER;
+            $this->options->authType = self::AUTH_TYPE_BEARER;
         }
+        */
     }
 
     public function setClientCredentialsPair(string $clientId, string $clientSecret): void
