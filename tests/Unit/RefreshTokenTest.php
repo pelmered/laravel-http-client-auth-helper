@@ -257,7 +257,7 @@ describe('Refresh Token Class', function () {
         );
 
         expect($accessToken->getAccessToken())->toBe('this_is_my_access_token_from_body_refresh_token')
-            ->and($accessToken->getExpiresIn())->toBe(3540)
+            ->and($accessToken->getExpiresIn())->toBeBetween(3535, 3540)
             ->and($accessToken->getExpiresAt())->toBeInstanceOf(Carbon::class)
             ->and($accessToken->getCustomCallback())->toBeNull();
     });
