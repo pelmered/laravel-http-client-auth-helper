@@ -81,7 +81,7 @@ test('macro with client credentials in credentials object', function () {
         ),
         [
             'scopes'    => ['scope1', 'scope2'],
-            'tokenType' => AccessToken::TYPE_QUERY,
+            'tokenType' => AccessToken::TOKEN_TYPE_QUERY,
             'authType'  => Credentials::AUTH_TYPE_BASIC,
         ],
     )->get('https://example.com/api');

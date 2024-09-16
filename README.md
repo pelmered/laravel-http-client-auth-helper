@@ -106,6 +106,7 @@ $response = Http::withRefreshToken(
 ```
 
 For full type safety, you can also provide objects instead of arrays:
+
 ```php
 use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\Credentials;
@@ -123,7 +124,7 @@ $response = Http::withRefreshToken(
     expires: 3600,
     grantType: 'password_credentials',
     authType: Credentials::AUTH_TYPE_BODY,
-    tokenType: AccessToken::TYPE_BEARER,
+    tokenType: AccessToken::TOKEN_TYPE_BEARER,
   ),
 )->get(
   'https://example.com/api',

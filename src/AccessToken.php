@@ -9,20 +9,20 @@ use InvalidArgumentException;
 
 final class AccessToken
 {
-    public const TYPE_BEARER = 'Bearer';
+    public const TOKEN_TYPE_BEARER = 'Bearer';
 
-    public const TYPE_QUERY = 'query';
+    public const TOKEN_TYPE_QUERY = 'query';
 
-    public const TYPE_CUSTOM = 'custom';
+    public const TOKEN_TYPE_CUSTOM = 'custom';
 
     public function __construct(
         protected string $accessToken,
         protected Carbon $expiresAt,
-        protected string $tokenType = self::TYPE_BEARER,
+        protected string $tokenType = self::TOKEN_TYPE_BEARER,
         protected string $tokenName = 'token',
-        protected ?Closure $customCallback = null,
+        protected ?Closure $customCallback = null
     ) {
-        if ($tokenType === self::TYPE_CUSTOM && is_null($customCallback)) {
+        if ($tokenType === self::TOKEN_TYPE_CUSTOM && is_null($customCallback)) {
             throw new InvalidArgumentException('customCallback must be set when using AUTH_TYPE_CUSTOM');
         }
     }
@@ -60,9 +60,9 @@ final class AccessToken
     public function getHttpClient(PendingRequest $httpClient): PendingRequest
     {
         return match ($this->tokenType) {
-            self::TYPE_BEARER => $httpClient->withToken($this->accessToken),
-            self::TYPE_QUERY  => $httpClient->withQueryParameters([$this->tokenName => $this->accessToken]),
-            self::TYPE_CUSTOM => $this->resolveCustomAuth($httpClient),
+            self::TOKEN_TYPE_BEARER => $httpClient->withToken($this->accessToken),
+            self::TOKEN_TYPE_QUERY  => $httpClient->withQueryParameters([$this->tokenName => $this->accessToken]),
+            self::TOKEN_TYPE_CUSTOM => $this->resolveCustomAuth($httpClient),
             default           => throw new InvalidArgumentException('Invalid auth type')
         };
     }

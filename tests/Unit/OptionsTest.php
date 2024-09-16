@@ -13,7 +13,7 @@ it('validates grantType when creating an option object', function () {
 
     new Options(
         grantType: 'invalid',
-        tokenType: AccessToken::TYPE_BEARER,
+        tokenType: AccessToken::TOKEN_TYPE_BEARER,
     );
 });
 

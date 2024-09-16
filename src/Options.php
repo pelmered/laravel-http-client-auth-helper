@@ -15,7 +15,7 @@ class Options
         public array $scopes = [],
         public string $authType = Credentials::AUTH_TYPE_BASIC, //TODO: Which auth type should be default?
         public string $grantType = Credentials::GRANT_TYPE_CLIENT_CREDENTIALS,
-        public string $tokenType = AccessToken::TYPE_BEARER,
+        public string $tokenType = AccessToken::TOKEN_TYPE_BEARER,
         public string $tokenName = 'token',
         public int|string|Closure $expires = 3600,
         public string|Closure $accessToken = 'access_token',
@@ -58,9 +58,9 @@ class Options
                 Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS,
             ]),
             'tokenType' => Rule::in([
-                AccessToken::TYPE_BEARER,
-                AccessToken::TYPE_QUERY,
-                AccessToken::TYPE_CUSTOM,
+                AccessToken::TOKEN_TYPE_BEARER,
+                AccessToken::TOKEN_TYPE_QUERY,
+                AccessToken::TOKEN_TYPE_CUSTOM,
             ]),
             'tokenName' => 'string',
         ])->validate();
@@ -90,7 +90,7 @@ class Options
         return [
             'scopes'      => [],
             'grantType'   => Credentials::GRANT_TYPE_CLIENT_CREDENTIALS,
-            'tokenType'   => AccessToken::TYPE_BEARER,
+            'tokenType'   => AccessToken::TOKEN_TYPE_BEARER,
             'authType'    => Credentials::AUTH_TYPE_BASIC,
             'expires'     => 3600,
             'accessToken' => 'access_token',

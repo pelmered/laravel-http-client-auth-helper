@@ -93,7 +93,7 @@ describe('Refresh Token Class', function () {
             new Options(
                 scopes: ['scope1', 'scope2'],
                 grantType: 'password_credentials',
-                tokenType: AccessToken::TYPE_CUSTOM,
+                tokenType: AccessToken::TOKEN_TYPE_CUSTOM,
                 tokenTypeCustomCallback: fn (PendingRequest $httpClient) => $httpClient->withHeader('Authorization', 'my_custom_token'),
             ),
         );
