@@ -3,6 +3,7 @@
 uses(\Pelmered\LaravelHttpOAuthHelper\Tests\TestCase::class);
 
 use Carbon\Carbon;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
@@ -225,7 +226,7 @@ describe('Refresh Token Class', function () {
                 'my_client_secret',
             ]),
             new Options(
-                scopes:   ['scope1', 'scope2'],
+                scopes: ['scope1', 'scope2'],
                 authType: 'invalid',
             ),
         );
@@ -239,12 +240,11 @@ describe('Refresh Token Class', function () {
             'https://example.com/oauth/token',
             new Credentials(['my_token']),
             new Options(
-                scopes:    ['scope1', 'scope2'],
+                scopes: ['scope1', 'scope2'],
                 tokenType: AccessToken::TOKEN_TYPE_CUSTOM,
             ),
         );
     });
-
 
     test('access token getters', function () {
 
@@ -260,6 +260,29 @@ describe('Refresh Token Class', function () {
             ->and($accessToken->getExpiresIn())->toBeBetween(3535, 3540)
             ->and($accessToken->getExpiresAt())->toBeInstanceOf(Carbon::class)
             ->and($accessToken->getCustomCallback())->toBeNull();
+    });
+
+    test('token type custom', function () {
+
+        $accessToken = app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials(['my_token']),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                tokenType: AccessToken::TOKEN_TYPE_CUSTOM,
+                tokenTypeCustomCallback: function (PendingRequest $httpClient) {
+                    return $httpClient->withHeader('MyCustomAuthHeader', 'my_custom_token');
+                }
+            ),
+        );
+
+        $httpClient = (new Factory)->createPendingRequest();
+
+        $httpClient = $accessToken->getHttpClient($httpClient);
+
+        $options = $httpClient->getOptions();
+
+        expect($options['headers']['MyCustomAuthHeader'])->toBe('my_custom_token');
     });
 
 })->done(assignee: 'pelmered');
