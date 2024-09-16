@@ -14,15 +14,16 @@ class TokenStore
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|\Psr\SimpleCache\InvalidArgumentException
      */
     public static function get(
         string $refreshUrl,
         Credentials $credentials,
         Options $options,
     ): AccessToken {
-        $cacheKey    = static::generateCacheKey($refreshUrl);
-        $accessToken = Cache::get($cacheKey);
+        $cacheKey = $options->cacheKey ?? static::generateCacheKey($refreshUrl);
+
+        $accessToken = Cache::store($options->cacheDriver)->get($cacheKey);
 
         if ($accessToken) {
             return $accessToken;
@@ -31,7 +32,7 @@ class TokenStore
         $accessToken = app(RefreshToken::class)(...func_get_args());
         $ttl         = $accessToken->getExpiresIn();
 
-        Cache::put($cacheKey, $accessToken, $ttl);
+        Cache::store($options->cacheDriver)->put($cacheKey, $accessToken, $ttl);
 
         return $accessToken;
     }

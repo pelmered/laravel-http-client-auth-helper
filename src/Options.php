@@ -20,6 +20,8 @@ class Options
         public int|string|Closure $expires = 3600,
         public string|Closure $accessToken = 'access_token',
         public ?Closure $tokenTypeCustomCallback = null,
+        public ?string $cacheKey = null,
+        public ?string $cacheDriver = null,
     ) {
         $this->validateOptions();
     }

@@ -24,7 +24,7 @@ This helper takes care of all the headaches and boilerplate code with a simple a
   - Access token key
 - ~~Improve data validation and error messages~~
 - Write/update readme
-- Make the cache store configurable
+- ~~Make the cache store configurable~~
 - Maybe: add more tests
 - Maybe: Add support for authorization_code and implicit grants
 

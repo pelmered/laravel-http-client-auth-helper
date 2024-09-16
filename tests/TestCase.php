@@ -2,9 +2,11 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper\Tests;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Pelmered\LaravelHttpOAuthHelper\LaravelHttpOAuthHelperServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -36,9 +38,25 @@ class TestCase extends \Orchestra\Testbench\TestCase
                     }
                 }
 
-                if ($request->url() === 'https://example.com/api') {
+                if (
+                    $request->url() === 'https://example.com/api'
+                    && $request->hasHeader('Authorization')
+                ) {
                     return Http::response([
-                        'data' => 'some data',
+                        'data'  => 'some data with bearer token',
+                        'token' => $request->header('Authorization')[0],
+                    ], 200);
+                }
+
+                if (Str::of($request->url())->startsWith('https://example.com/api?token=')) {
+
+                    $url = parse_url($request->url(), PHP_URL_QUERY);
+                    parse_str($url, $output);
+                    $token = $output['token'];
+
+                    return Http::response([
+                        'data'  => 'some data with query string token',
+                        'token' => $token,
                     ], 200);
                 }
 
@@ -46,7 +64,40 @@ class TestCase extends \Orchestra\Testbench\TestCase
             }
         );
 
-        Cache::spy();
+        //Cache::spy();
+    }
+
+    protected function defineEnvironment($app)
+    {
+        // Setup default database to use sqlite :memory:
+        tap($app['config'], function (Repository $config) {
+
+            //dd($config->get('cache.stores'));
+
+            // Setup queue database connections.
+            $configData = [
+                'database.default'               => 'testbench',
+                'database.connections.testbench' => [
+                    'driver'   => 'sqlite',
+                    'database' => ':memory:',
+                    'prefix'   => '',
+                ],
+                'queue.batching.database' => 'testbench',
+                'queue.failed.database'   => 'testbench',
+
+                //'cache.stores.array'
+
+            ];
+
+            foreach ($configData as $key => $value) {
+                $config->set($key, $value);
+            }
+        });
+    }
+
+    protected function usesMySqlConnection($app)
+    {
+        $app['config']->set('database.default', 'mysql');
     }
 
     protected function getPackageProviders($app): array
