@@ -98,7 +98,7 @@ class Credentials
             match ($arrayLength) {
                 1       => $this->setRefreshToken($credentials[0]),
                 2       => $this->setClientCredentialsPair($credentials[0], $credentials[1]),
-                default => throw new InvalidArgumentException('Invalid credentials. Check documentation/readme. '),
+                default => throw new InvalidArgumentException('Invalid credentials. Check documentation/readme.'),
             };
 
             return;

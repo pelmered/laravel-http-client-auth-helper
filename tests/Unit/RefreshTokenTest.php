@@ -197,10 +197,9 @@ describe('Refresh Token Class', function () {
         });
     });
 
-    /*
-    test('throws exception with an invalid auth type', function () {
-        //$this->expectException(\Illuminate\Validation\ValidationException::class);
-        //$this->expectExceptionMessage('The selected auth type is invalid');
+    test('throws exception with invalid credentials', function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid credentials. Check documentation/readme.');
 
         app(RefreshToken::class)(
             'https://example.com/oauth/token',
@@ -214,9 +213,25 @@ describe('Refresh Token Class', function () {
             ),
         );
     });
-    */
 
     test('throws exception with an invalid auth type', function () {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectExceptionMessage('The selected auth type is invalid.');
+
+        app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials([
+                'my_client_id',
+                'my_client_secret',
+            ]),
+            new Options(
+                scopes:   ['scope1', 'scope2'],
+                authType: 'invalid',
+            ),
+        );
+    });
+
+    test('throws exception with an invalid token type', function () {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('customCallback must be set when using AUTH_TYPE_CUSTOM');
 
@@ -224,7 +239,7 @@ describe('Refresh Token Class', function () {
             'https://example.com/oauth/token',
             new Credentials(['my_token']),
             new Options(
-                scopes: ['scope1', 'scope2'],
+                scopes:    ['scope1', 'scope2'],
                 tokenType: AccessToken::TOKEN_TYPE_CUSTOM,
             ),
         );
@@ -242,9 +257,9 @@ describe('Refresh Token Class', function () {
         );
 
         expect($accessToken->getAccessToken())->toBe('this_is_my_access_token_from_body_refresh_token')
-                                              ->and($accessToken->getExpiresIn())->toBe(3540)
-                                              ->and($accessToken->getExpiresAt())->toBeInstanceOf(Carbon::class)
-                                              ->and($accessToken->getCustomCallback())->toBeNull();
+            ->and($accessToken->getExpiresIn())->toBe(3540)
+            ->and($accessToken->getExpiresAt())->toBeInstanceOf(Carbon::class)
+            ->and($accessToken->getCustomCallback())->toBeNull();
     });
 
 })->done(assignee: 'pelmered');
