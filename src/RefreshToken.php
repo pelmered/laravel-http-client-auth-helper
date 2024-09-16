@@ -43,6 +43,7 @@ class RefreshToken
             //tokenType: $options['auth_type'],
             tokenType: $options->tokenType,
             customCallback: $options->tokenTypeCustomCallback,
+            tokenName: $options->tokenName,
         );
     }
 

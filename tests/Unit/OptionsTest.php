@@ -50,7 +50,7 @@ it('checks for objects in scopes when creating an option object', function () {
     $this->expectExceptionMessage('The scopes.2 field must be a string.');
 
     new Options(
-        scopes: ['valid', 'also_valid', new stdClass()],
+        scopes: ['valid', 'also_valid', new stdClass],
     );
 });
 

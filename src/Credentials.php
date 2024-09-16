@@ -120,6 +120,7 @@ class Credentials
                     $options->tokenName => $this->token,
                 ]);
             }
+
             return $httpClient->withToken($this->token, $options->authType);
         }
         if ($options->authType === self::AUTH_TYPE_BASIC) {

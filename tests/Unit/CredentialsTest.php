@@ -2,7 +2,6 @@
 
 uses(\Pelmered\LaravelHttpOAuthHelper\Tests\TestCase::class);
 
-use Illuminate\Validation\ValidationException;
 use Pelmered\LaravelHttpOAuthHelper\Credentials;
 
 it('validates credentials array when creating a credential object', function () {

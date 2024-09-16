@@ -15,13 +15,12 @@ final class AccessToken
 
     public const TYPE_CUSTOM = 'custom';
 
-    protected string $tokenName = 'token';
-
     public function __construct(
         protected string $accessToken,
         protected Carbon $expiresAt,
         protected string $tokenType = self::TYPE_BEARER,
-        protected ?Closure $customCallback = null
+        protected string $tokenName = 'token',
+        protected ?Closure $customCallback = null,
     ) {
         if ($tokenType === self::TYPE_CUSTOM && is_null($customCallback)) {
             throw new InvalidArgumentException('customCallback must be set when using AUTH_TYPE_CUSTOM');
@@ -41,6 +40,21 @@ final class AccessToken
     public function getExpiresIn(): int
     {
         return (int) round(Carbon::now()->diffInSeconds($this->expiresAt));
+    }
+
+    public function getTokenType(): string
+    {
+        return $this->tokenType;
+    }
+
+    public function getTokenName(): string
+    {
+        return $this->tokenName;
+    }
+
+    public function getCustomCallback(): ?Closure
+    {
+        return $this->customCallback;
     }
 
     public function getHttpClient(PendingRequest $httpClient): PendingRequest
