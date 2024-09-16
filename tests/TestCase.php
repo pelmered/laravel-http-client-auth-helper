@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\LaravelHttpOAuthHelperServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -17,7 +18,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         Http::preventStrayRequests();
 
         Http::fake(
-            static function (Request $request) {
+             function (Request $request) {
                 if ($request->url() === 'https://example.com/oauth/token') {
                     if ($request->token = 'my_refresh_token') {
                         return Http::response([
@@ -49,10 +50,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
                 }
 
                 if (Str::of($request->url())->startsWith('https://example.com/api?token=')) {
-
-                    $url = parse_url($request->url(), PHP_URL_QUERY);
-                    parse_str($url, $output);
-                    $token = $output['token'];
+                    $token = AccessToken::parseQueryTokenFromUrl($request->url());
 
                     return Http::response([
                         'data'  => 'some data with query string token',
@@ -63,8 +61,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
                 return Http::response([], 200);
             }
         );
-
-        //Cache::spy();
     }
 
     protected function defineEnvironment($app)

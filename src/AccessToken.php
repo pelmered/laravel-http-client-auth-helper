@@ -5,6 +5,7 @@ namespace Pelmered\LaravelHttpOAuthHelper;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use InvalidArgumentException;
 
 final class AccessToken
@@ -63,7 +64,7 @@ final class AccessToken
             self::TOKEN_TYPE_BEARER => $httpClient->withToken($this->accessToken),
             self::TOKEN_TYPE_QUERY  => $httpClient->withQueryParameters([$this->tokenName => $this->accessToken]),
             self::TOKEN_TYPE_CUSTOM => $this->resolveCustomAuth($httpClient),
-            default           => throw new InvalidArgumentException('Invalid auth type')
+            default                 => throw new InvalidArgumentException('Invalid auth type')
         };
     }
 
@@ -74,5 +75,28 @@ final class AccessToken
         }
 
         return ($this->customCallback)($httpClient);
+    }
+
+    public static function parseQueryTokenFromResponse(Response $response, string $queryKey = 'token'): ?string
+    {
+        $uri = $response->effectiveUri();
+
+        if (! $uri) {
+            return null;
+        }
+
+        return self::parseTokenFromQueryString($response->effectiveUri()?->getQuery(), $queryKey);
+    }
+
+    public static function parseQueryTokenFromUrl(string $url, string $queryKey = 'token'): string
+    {
+        return self::parseTokenFromQueryString(parse_url($url, PHP_URL_QUERY), $queryKey);
+    }
+
+    public static function parseTokenFromQueryString(string $queryString, string $queryKey = 'token'): string
+    {
+        parse_str($queryString, $output);
+
+        return $output[$queryKey];
     }
 }

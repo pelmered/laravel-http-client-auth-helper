@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Pelmered\LaravelHttpOAuthHelper\AccessToken;
@@ -262,7 +263,7 @@ describe('Refresh Token Class', function () {
             ->and($accessToken->getCustomCallback())->toBeNull();
     });
 
-    test('token type custom', function () {
+    test('custom token type', function () {
 
         $accessToken = app(RefreshToken::class)(
             'https://example.com/oauth/token',
@@ -283,6 +284,47 @@ describe('Refresh Token Class', function () {
         $options = $httpClient->getOptions();
 
         expect($options['headers']['MyCustomAuthHeader'])->toBe('my_custom_token');
+    });
+
+    test('custom auth token type', function () {
+
+        app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials(function (PendingRequest $httpClient) {
+                return $httpClient->withHeader('MyCustomAuthHeader', 'my_custom_token');
+            }),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+            ),
+        );
+        Http::assertSent(static function (Request $request) {
+            return $request->hasHeader('MyCustomAuthHeader', 'my_custom_token')
+                   && $request->url() === 'https://example.com/oauth/token';
+        });
+    });
+    test('auth type query', function () {
+
+        app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials('my_query_token'),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                authType: Credentials::AUTH_TYPE_QUERY,
+                tokenName: 'custom_token_name',
+                accessToken: function (Response $response) {
+                    return AccessToken::parseQueryTokenFromResponse($response, 'custom_token_name');
+                }
+            ),
+        );
+        Http::assertSent(function (Request $request) {
+
+            $token = AccessToken::parseQueryTokenFromUrl($request->url(), 'custom_token_name');
+
+            expect($token)->toBe('my_query_token');
+
+
+            return $request->url() === 'https://example.com/oauth/token?custom_token_name=my_query_token';
+        });
     });
 
 })->done(assignee: 'pelmered');
