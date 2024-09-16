@@ -114,7 +114,7 @@ test('macro with custom cache store', function () {
         ),
         [
             'scopes'      => ['scope1', 'scope2'],
-            'tokenType'   => AccessToken::TYPE_BEARER,
+            'tokenType'   => AccessToken::TOKEN_TYPE_BEARER,
             'authType'    => Credentials::AUTH_TYPE_BASIC,
             'cacheDriver' => 'file',
             'cacheKey'    => 'my_cache_key',

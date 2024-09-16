@@ -1,6 +1,8 @@
 <?php
 
 uses(\Pelmered\LaravelHttpOAuthHelper\Tests\TestCase::class);
+
+use Carbon\Carbon;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Cache;
@@ -85,6 +87,9 @@ describe('Refresh Token Class', function () {
 
     test('refresh token custom', function () {
         Cache::clear();
+
+        $callback = fn (PendingRequest $httpClient) => $httpClient->withHeader('Authorization', 'my_custom_token');
+
         $accessToken = app(RefreshToken::class)(
             'https://example.com/oauth/token',
             new Credentials(
@@ -94,11 +99,12 @@ describe('Refresh Token Class', function () {
                 scopes: ['scope1', 'scope2'],
                 grantType: 'password_credentials',
                 tokenType: AccessToken::TOKEN_TYPE_CUSTOM,
-                tokenTypeCustomCallback: fn (PendingRequest $httpClient) => $httpClient->withHeader('Authorization', 'my_custom_token'),
+                tokenTypeCustomCallback: $callback,
             ),
         );
 
-        expect($accessToken->getAccessToken())->toEqual('this_is_my_access_token_from_body_refresh_token');
+        expect($accessToken->getAccessToken())->toEqual('this_is_my_access_token_from_body_refresh_token')
+            ->and($accessToken->getCustomCallback())->toEqual($callback);
         Http::assertSent(static function (Request $request) {
             return $request->url() === 'https://example.com/oauth/token'
                    && $request->hasHeader('Authorization', 'my_custom_token')
@@ -209,4 +215,36 @@ describe('Refresh Token Class', function () {
         );
     });
     */
+
+    test('throws exception with an invalid auth type', function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('customCallback must be set when using AUTH_TYPE_CUSTOM');
+
+        app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials(['my_token']),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                tokenType: AccessToken::TOKEN_TYPE_CUSTOM,
+            ),
+        );
+    });
+
+
+    test('access token getters', function () {
+
+        $accessToken = app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials(['my_token']),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+            ),
+        );
+
+        expect($accessToken->getAccessToken())->toBe('this_is_my_access_token_from_body_refresh_token')
+                                              ->and($accessToken->getExpiresIn())->toBe(3540)
+                                              ->and($accessToken->getExpiresAt())->toBeInstanceOf(Carbon::class)
+                                              ->and($accessToken->getCustomCallback())->toBeNull();
+    });
+
 })->done(assignee: 'pelmered');
