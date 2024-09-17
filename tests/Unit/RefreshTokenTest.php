@@ -26,6 +26,7 @@ describe('Refresh Token Class', function () {
             new Options(
                 scopes: ['scope1', 'scope2'],
                 grantType: 'client_credentials',
+                authType: 'basic'
             ),
         );
 
@@ -36,6 +37,23 @@ describe('Refresh Token Class', function () {
                    && $request['grant_type'] === 'client_credentials'
                    && $request['scope']      === 'scope1 scope2';
         });
+    });
+
+    test('refresh token basic with invalid credentials', function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Basic auth requires client id and client secret. Check documentation/readme.');
+
+        $accessToken = app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials([
+                'token',
+            ]),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                authType: Credentials::AUTH_TYPE_BASIC,
+                grantType: 'client_credentials',
+            ),
+        );
     });
 
     test('refresh token body', function () {
@@ -186,6 +204,7 @@ describe('Refresh Token Class', function () {
                 accessToken: static function ($response) {
                     return $response->json()['custom_access_token'];
                 },
+                authType: Credentials::AUTH_TYPE_BASIC,
             ),
         );
 
@@ -302,6 +321,7 @@ describe('Refresh Token Class', function () {
                    && $request->url() === 'https://example.com/oauth/token';
         });
     });
+
     test('auth type query', function () {
 
         app(RefreshToken::class)(
@@ -322,9 +342,92 @@ describe('Refresh Token Class', function () {
 
             expect($token)->toBe('my_query_token');
 
-
             return $request->url() === 'https://example.com/oauth/token?custom_token_name=my_query_token';
         });
+    });
+
+    test('set token expiry with string key with date', function () {
+
+        $this->clearExistingFakes();
+
+        /** @var Carbon $nowDate */
+        $nowDate = Carbon::create(2024, 11, 11, 11);
+
+        Carbon::setTestNow($nowDate);
+
+        Http::fake([
+            'https://example.com/oauth/token' => Http::response([
+                'token_type'   => 'Bearer',
+                'access_token' => 'my_custom_access_token',
+                'scope'        => 'scope1 scope2',
+                'expires_date' => $nowDate->addHour(),
+            ], 200),
+        ]);
+
+        $accessToken = app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials('my_query_token'),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                expires: 'expires_date',
+            ),
+        );
+
+        expect($accessToken->getExpiresAt()->timestamp)->toBe($nowDate->subMinute()->timestamp);
+    });
+
+    test('set token expiry with string key with integer', function () {
+
+        /** @var Carbon $nowDate */
+        $nowDate = Carbon::create(2024, 11, 11, 11);
+
+        Carbon::setTestNow($nowDate);
+
+        $accessToken = app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials('my_query_token'),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                expires: 'expires_in',
+            ),
+        );
+
+        expect($accessToken->getExpiresAt()->timestamp)->toBe($nowDate->addSeconds(7200)->subMinute()->timestamp);
+    });
+
+    test('set token expiry with carbon object', function () {
+
+        /** @var Carbon $nowDate */
+        $nowDate = Carbon::create(2024, 11, 11, 11);
+
+        Carbon::setTestNow($nowDate);
+
+        $accessToken = app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials('my_query_token'),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                expires: Carbon::now()->addHour(),
+            ),
+        );
+
+        expect($accessToken->getExpiresAt()->timestamp)->toBe($nowDate->addHour()->subMinute()->timestamp);
+    });
+
+    test('invalid token expiry', function () {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid expires option');
+
+        app(RefreshToken::class)(
+            'https://example.com/oauth/token',
+            new Credentials('my_query_token'),
+            new Options(
+                scopes: ['scope1', 'scope2'],
+                expires: function () {
+                    return new stdClass;
+                },
+            ),
+        );
     });
 
 })->done(assignee: 'pelmered');

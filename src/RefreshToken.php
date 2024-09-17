@@ -67,6 +67,10 @@ class RefreshToken
                 $expires = $response->json()[$expires];
             }
 
+            if (is_int($expires)) {
+                return Carbon::now()->addSeconds($expires - 60);
+            }
+
             return Carbon::parse($expires)->subMinute();
         }
 

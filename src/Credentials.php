@@ -112,8 +112,16 @@ class Credentials
         }
         if (is_callable($this->customCallback)) {
             return ($this->customCallback)($httpClient);
-
         }
+
+        if ($options->authType === self::AUTH_TYPE_BASIC) {
+            if (! $this->clientId || ! $this->clientSecret) {
+                throw new InvalidArgumentException('Basic auth requires client id and client secret. Check documentation/readme.');
+            }
+
+            return $httpClient->withBasicAuth($this->clientId, $this->clientSecret);
+        }
+
         if ($this->token) {
             if ($options->authType === self::AUTH_TYPE_QUERY) {
                 return $httpClient->withQueryParameters([
@@ -123,16 +131,7 @@ class Credentials
 
             return $httpClient->withToken($this->token, $options->authType);
         }
-        if ($options->authType === self::AUTH_TYPE_BASIC) {
-            if (! $this->clientId || ! $this->clientSecret) {
-                throw new InvalidArgumentException('Basic auth requires client id and client secret. Check documentation/readme. ');
-            }
 
-            return $httpClient->withBasicAuth($this->clientId, $this->clientSecret);
-        }
-        if ($options->authType === self::AUTH_TYPE_CUSTOM && is_callable($this->customCallback)) {
-            return ($this->customCallback)($httpClient);
-        }
 
         return $httpClient;
     }

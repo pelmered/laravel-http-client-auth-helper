@@ -32,7 +32,10 @@ test('macro with shorthand client credentials', function () {
         [
             'my_client_id', 'my_client_secret',
         ],
-        ['scopes' => ['scope1', 'scope2']],
+        [
+            'scopes' => ['scope1', 'scope2'],
+            'authType' => 'basic',
+        ],
     )->get('https://example.com/api');
 
     expect($response->json()['data'])->toBe('some data with bearer token');

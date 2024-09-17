@@ -24,8 +24,14 @@
 |
 */
 
+use Carbon\Carbon;
+
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
+});
+
+expect()->extend('toBeWithin', function ($integer, $acceptableDiff) {
+    return $this->toBeBetween($integer-$acceptableDiff, $integer+$acceptableDiff);
 });
 
 /*
@@ -41,5 +47,12 @@ expect()->extend('toBeOne', function () {
 
 function something()
 {
-    // ..
+
+}
+function isSameAccessToken($accessToken1, $accessToken2)
+{
+    expect($accessToken1->getAccessToken())->toBe($accessToken2->getAccessToken())
+        ->and($accessToken1->getExpiresIn())->toBeWithin($accessToken1->getExpiresIn(), 10)
+        ->and($accessToken1->getExpiresAt())->toBeInstanceOf(Carbon::class)
+        ->and($accessToken1->getCustomCallback())->toBe($accessToken1->getCustomCallback());
 }

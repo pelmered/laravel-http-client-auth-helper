@@ -2,6 +2,7 @@
 
 namespace Pelmered\LaravelHttpOAuthHelper;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -13,11 +14,11 @@ class Options
      */
     final public function __construct(
         public array $scopes = [],
-        public string $authType = Credentials::AUTH_TYPE_BASIC, //TODO: Which auth type should be default?
+        public string $authType = Credentials::AUTH_TYPE_BEARER,
         public string $grantType = Credentials::GRANT_TYPE_CLIENT_CREDENTIALS,
         public string $tokenType = AccessToken::TOKEN_TYPE_BEARER,
         public string $tokenName = 'token',
-        public int|string|Closure $expires = 3600,
+        public int|string|Closure|Carbon $expires = 3600,
         public string|Closure $accessToken = 'access_token',
         public ?Closure $tokenTypeCustomCallback = null,
         public ?string $cacheKey = null,
@@ -91,7 +92,7 @@ class Options
             'scopes'      => [],
             'grantType'   => Credentials::GRANT_TYPE_CLIENT_CREDENTIALS,
             'tokenType'   => AccessToken::TOKEN_TYPE_BEARER,
-            'authType'    => Credentials::AUTH_TYPE_BASIC,
+            'authType'    => Credentials::AUTH_TYPE_BEARER,
             'expires'     => 3600,
             'accessToken' => 'access_token',
         ];
