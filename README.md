@@ -102,34 +102,34 @@ composer require pelmered/laravel-http-client-auth-helper
 
 ## Options reference
 
-#### scopes - `array`
+### scopes - `array`
 Scopes to send when requesting an access token.
 Typically only used for OAuth2 flows.\
 **Possible options:** array with strings
 **Default:** `[]`
 
-#### authType - `string`
+### authType - `string`
 The type of authorization for the refresh token request.\
 **Possible options:** `Credentials::AUTH_TYPE_BEARER`, `Credentials::AUTH_TYPE_BODY`, `Credentials::AUTH_TYPE_QUERY`, `Credentials::AUTH_TYPE_BASIC`, `Credentials::AUTH_TYPE_CUSTOM`,\
 **Default:** `Credentials::AUTH_TYPE_BEARER` (=`'Bearer'`)
 
-#### grantType - `string`
+### grantType - `string`
 Grant type for OAuth2 flows.
 **Possible options:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS`, `Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS` (authorization_code and implicit grants are not yet supported. See [issue #3](https://github.com/pelmered/laravel-http-client-auth-helper/issues/3))
 **Default:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS` (=`'client_credentials'`)
 
-#### tokenType - `string`
+### tokenType - `string`
 How the access token should be applied to all subsequent requests.
 
 **Possible options:** `AccessToken::TOKEN_TYPE_BEARER`,`AccessToken::TOKEN_TYPE_QUERY`,`AccessToken::TOKEN_TYPE_CUSTOM`,
 **Default:** `AccessToken::TOKEN_TYPE_BEARER` (=`'Bearer'`)
 
-#### tokenName - `string`
+### tokenName - `string`
 The name of the token field. This only applies for when the token is applied as a query parameter or to the body of the request. 
 **Possible options:** Any string
 **Default:** `'token'`
 
-#### expires - `int|string|Closure|Carbon`
+### expires - `int|string|Closure|Carbon`
 This determines when the access token expires.\
 **Possible options:** \
 integer - for how long until expiry in seconds)\
@@ -138,26 +138,26 @@ Closure - A closure that receives the refresh response and can return any other 
 Carbon  - A Carbon object with the time of the expiry.\
 **Default:** 3600
 
-#### accessToken - `string|Closure`
+### accessToken - `string|Closure`
 This is where the access token can be found on the refresh response.\
 **Possible options:**\
 string - The key of the access token in the refresh response.\
 Closure - A closure that receives the refresh response and should return the token as a string.\
 **Default:** `'access_token'`
 
-#### tokenTypeCustomCallback - `?Closure`
+### tokenTypeCustomCallback - `?Closure`
 A callback for giving dull control of how the authentication should be applied. 
 The closure receives the Http client and should return a new Http Client where the auth information has been appended.\
 **Possible options:**\ Any closure that returns a Http Client (`Illuminate\Http\Client\PendingRequest`).\
 **Default:** `null`
 
-#### cacheKey - `?string`
+### cacheKey - `?string`
 The cache key that should be used to save the access tokens.
 If left empty, it will be generated based on the refresh URL.\
 **Possible options:**\
 **Default:** `null`
 
-#### cacheDriver - `?string`
+### cacheDriver - `?string`
 The cache driver/store that should be used for storing the access tokens.
 If left empty, the Laravel default will be used.\
 **Possible options:**\
