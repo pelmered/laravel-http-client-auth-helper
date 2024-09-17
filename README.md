@@ -1,4 +1,4 @@
-# Laravel HTTP Client Auth helper
+# Laravel HTTP Client Auth helper 🤝
 
 An easy-to-use helper for Laravel HTTP Client to make manage API requests with a two-step auth flow. 
 For example, OAuth2 or refresh tokens to get a new short-lived access token.\
@@ -16,22 +16,27 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 I want to support as many common auth flows as possible.\
 If you have a use case that is not super obscure,
 please [open an issue](https://github.com/pelmered/laravel-http-client-auth-helper/issues/new) where you provide as much detail as possible,
-or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pulls).
+or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pulls) with a working solution.
 
 #### Note: the API is not yet stable and the documentation is in the process of being updated. I hope I can release a version 1 soon.
 
 #### TODO before stable 1.0.0 version:
-- Define a stable API
-- Set good defaults
-  - Auth type: Basic or bearer?
-  - Expires option
-  - Credential token key
-  - Access token key
+- ~~Define a stable API~~
+- ~~Set good defaults~~
+  - ~~Auth type: Basic or bearer?~~
+  - ~~Expires option~~
+  - ~~Credential token key~~
+  - ~~Access token key~~
 - ~~Improve data validation and error messages~~
-- Write/update readme
+- ~~Write/update readme~~
 - ~~Make the cache store configurable~~
-- Maybe: add more tests
-- Maybe: Add support for authorization_code and implicit grants
+- ~~Maybe: add more tests~~
+- ~~Maybe: Add support for authorization_code and implicit grants~~ → target for version 1.1
+
+##### Plans for 1.1
+
+- Automatically refresh tokens in the background before they expire.
+- Add support for authorization_code and implicit OAuth2 grants.
 
 [![Latest Stable Version](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/v/stable)](https://packagist.org/packages/pelmered/laravel-http-client-auth-helper)
 [![Total Downloads](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/d/total)](//packagist.org/packages/pelmered/laravel-http-client-auth-helper)
@@ -46,6 +51,7 @@ or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pul
 [![Tested on PHP 8.1 to 8.4](https://img.shields.io/badge/Tested%20on%20PHP-8.1%20|%208.2%20|%208.3%20|%208.4-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/filament-money-field/actions/workflows/tests.yml)
 [![Tested on OS:es Linux, MacOS, Windows](https://img.shields.io/badge/Tested%20on%20lastest%20versions%20of-%20Ubuntu%20|%20MacOS%20|%20Windows-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/laravel-http-client-auth-helper/actions/workflows/tests.yml)
 
+## Table of contents
 <!-- toc -->
 
 - [Requirements](#requirements)
@@ -136,7 +142,7 @@ integer - for how long until expiry in seconds)\
 string  - Can be key of the field in response that contains the expiry of the token. Can also be a string with a date. This is then parsed by Carbon::parse so any format that Carbon can parse is acceptable.\
 Closure - A closure that receives the refresh response and can return any other acceptable value (integer, string or Carbon object).\
 Carbon  - A Carbon object with the time of the expiry.\
-**Default:** 3600
+**Default:** `3600`
 
 ### accessToken - `string|Closure`
 This is where the access token can be found on the refresh response.\
