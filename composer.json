@@ -66,7 +66,8 @@
         ],
         "type": [
             "@php vendor/bin/pest --type-coverage"
-        ]
+        ],
+        "update-readme-toc": "markdown-toc -i README.md"
     },
     "config": {
         "allow-plugins": {

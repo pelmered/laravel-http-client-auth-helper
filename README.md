@@ -1,5 +1,3 @@
-
-
 # Laravel HTTP Client Auth helper
 
 An easy-to-use helper for Laravel HTTP Client to make manage API requests with a two-step auth flow. 
@@ -12,6 +10,13 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 - Automatically caches the access tokens for their lifetime.
 - Extends the Laravel HTTP Client to make it straightforward to use. Se the [usage section](#usage) below for examples. 
 - Supports common auth flows like OAuth2 and refresh tokens with most grant types.
+
+#### Vision, roadmap & plans for the future
+
+I want to support as many common auth flows as possible.\
+If you have a use case that is not super obscure,
+please [open an issue](https://github.com/pelmered/laravel-http-client-auth-helper/issues/new) where you provide as much detail as possible,
+or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pulls).
 
 #### Note: the API is not yet stable and the documentation is in the process of being updated. I hope I can release a version 1 soon.
 
@@ -41,6 +46,33 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 [![Tested on PHP 8.1 to 8.4](https://img.shields.io/badge/Tested%20on%20PHP-8.1%20|%208.2%20|%208.3%20|%208.4-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/filament-money-field/actions/workflows/tests.yml)
 [![Tested on OS:es Linux, MacOS, Windows](https://img.shields.io/badge/Tested%20on%20lastest%20versions%20of-%20Ubuntu%20|%20MacOS%20|%20Windows-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/laravel-http-client-auth-helper/actions/workflows/tests.yml)
 
+<!-- toc -->
+
+- [Requirements](#requirements)
+- [Vision, roadmap & plans for the future](#vision-roadmap--plans-for-the-future)
+- [Contributing](#contributing)
+  * [Issues & Bug Reports](#issues--bug-reports)
+- [Installation](#installation)
+- [Options reference](#options-reference)
+    + [scopes - `array`](#scopes---array)
+    + [authType - `string`](#authtype---string)
+    + [grantType - `string`](#granttype---string)
+    + [tokenType - `string`](#tokentype---string)
+    + [tokenName - `string`](#tokenname---string)
+    + [expires - `int|string|Closure|Carbon`](#expires---intstringclosurecarbon)
+    + [accessToken - `string|Closure`](#accesstoken---stringclosure)
+    + [tokenTypeCustomCallback - `?Closure`](#tokentypecustomcallback---closure)
+    + [cacheKey - `?string`](#cachekey---string)
+    + [cacheDriver - `?string`](#cachedriver---string)
+- [Usage](#usage)
+    + [Minimal example:](#minimal-example)
+    + [All parameters with default values:](#all-parameters-with-default-values)
+    + [For full type safety, you can also provide objects instead of arrays:](#for-full-type-safety-you-can-also-provide-objects-instead-of-arrays)
+    + [Customize with callbacks](#customize-with-callbacks)
+  * [Integration tips](#integration-tips)
+
+<!-- tocstop -->
+
 ## Requirements
 
 - PHP 8.2 or higher
@@ -68,11 +100,74 @@ I will try to fix reported issues as soon as possible, but I do this in my spare
 composer require pelmered/laravel-http-client-auth-helper
 ```
 
+## Options reference
+
+#### scopes - `array`
+Scopes to send when requesting an access token.
+Typically only used for OAuth2 flows.\
+**Possible options:** array with strings
+**Default:** `[]`
+
+#### authType - `string`
+The type of authorization for the refresh token request.\
+**Possible options:** `Credentials::AUTH_TYPE_BEARER`, `Credentials::AUTH_TYPE_BODY`, `Credentials::AUTH_TYPE_QUERY`, `Credentials::AUTH_TYPE_BASIC`, `Credentials::AUTH_TYPE_CUSTOM`,\
+**Default:** `Credentials::AUTH_TYPE_BEARER` (=`'Bearer'`)
+
+#### grantType - `string`
+Grant type for OAuth2 flows.
+**Possible options:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS`, `Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS` (authorization_code and implicit grants are not yet supported. See [issue #3](https://github.com/pelmered/laravel-http-client-auth-helper/issues/3))
+**Default:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS` (=`'client_credentials'`)
+
+#### tokenType - `string`
+How the access token should be applied to all subsequent requests.
+
+**Possible options:** `AccessToken::TOKEN_TYPE_BEARER`,`AccessToken::TOKEN_TYPE_QUERY`,`AccessToken::TOKEN_TYPE_CUSTOM`,
+**Default:** `AccessToken::TOKEN_TYPE_BEARER` (=`'Bearer'`)
+
+#### tokenName - `string`
+The name of the token field. This only applies for when the token is applied as a query parameter or to the body of the request. 
+**Possible options:** Any string
+**Default:** `'token'`
+
+#### expires - `int|string|Closure|Carbon`
+This determines when the access token expires.\
+**Possible options:** \
+integer - for how long until expiry in seconds)\
+string  - Can be key of the field in response that contains the expiry of the token. Can also be a string with a date. This is then parsed by Carbon::parse so any format that Carbon can parse is acceptable.\
+Closure - A closure that receives the refresh response and can return any other acceptable value (integer, string or Carbon object).\
+Carbon  - A Carbon object with the time of the expiry.\
+**Default:** 3600
+
+#### accessToken - `string|Closure`
+This is where the access token can be found on the refresh response.\
+**Possible options:**\
+string - The key of the access token in the refresh response.\
+Closure - A closure that receives the refresh response and should return the token as a string.\
+**Default:** `'access_token'`
+
+#### tokenTypeCustomCallback - `?Closure`
+A callback for giving dull control of how the authentication should be applied. 
+The closure receives the Http client and should return a new Http Client where the auth information has been appended.\
+**Possible options:**\ Any closure that returns a Http Client (`Illuminate\Http\Client\PendingRequest`).\
+**Default:** `null`
+
+#### cacheKey - `?string`
+The cache key that should be used to save the access tokens.
+If left empty, it will be generated based on the refresh URL.\
+**Possible options:**\
+**Default:** `null`
+
+#### cacheDriver - `?string`
+The cache driver/store that should be used for storing the access tokens.
+If left empty, the Laravel default will be used.\
+**Possible options:**\
+**Default:** `null`
+
 ## Usage
 
 It's really simple to use. Just add the `withRefreshToken` method to your HTTP request and provide the necessary parameters. No configuration needed.
 
-Minimal example:
+#### Minimal example:
 ```php
 $response = Http::withRefreshToken(
   'https://example.com/token.oauth2',
@@ -85,7 +180,7 @@ $response = Http::withRefreshToken(
 );
 ```
 
-All parameters with default values:
+#### All parameters with default values:
 ```php
 $response = Http::withRefreshToken(
   'https://example.com/token.oauth2',
@@ -105,7 +200,7 @@ $response = Http::withRefreshToken(
 );
 ```
 
-For full type safety, you can also provide objects instead of arrays:
+#### For full type safety, you can also provide objects instead of arrays:
 
 ```php
 use Pelmered\LaravelHttpOAuthHelper\AccessToken;
@@ -131,6 +226,7 @@ $response = Http::withRefreshToken(
 );
 ```
 
+#### Customize with callbacks
 You can also provide callbacks for `expires`, `auth_type`, and `access_token` to customize the behavior.
 ```php
 $response = Http::withRefreshToken(
