@@ -120,35 +120,34 @@ The type of authorization for the refresh token request.\
 **Default:** `Credentials::AUTH_TYPE_BEARER` (=`'Bearer'`)
 
 ### grantType - `string`
-Grant type for OAuth2 flows.
-**Possible options:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS`, `Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS` (authorization_code and implicit grants are not yet supported. See [issue #3](https://github.com/pelmered/laravel-http-client-auth-helper/issues/3))
+Grant type for OAuth2 flows.\
+**Possible options:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS`, `Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS` (authorization_code and implicit grants are not yet supported. See [issue #3](https://github.com/pelmered/laravel-http-client-auth-helper/issues/3))\
 **Default:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS` (=`'client_credentials'`)
 
 ### tokenType - `string`
-How the access token should be applied to all subsequent requests.
-
-**Possible options:** `AccessToken::TOKEN_TYPE_BEARER`,`AccessToken::TOKEN_TYPE_QUERY`,`AccessToken::TOKEN_TYPE_CUSTOM`,
+How the access token should be applied to all subsequent requests.\
+**Possible options:** `AccessToken::TOKEN_TYPE_BEARER`, `AccessToken::TOKEN_TYPE_QUERY`, `AccessToken::TOKEN_TYPE_CUSTOM` \
 **Default:** `AccessToken::TOKEN_TYPE_BEARER` (=`'Bearer'`)
 
 ### tokenName - `string`
-The name of the token field. This only applies for when the token is applied as a query parameter or to the body of the request. 
-**Possible options:** Any string
+The name of the token field. This only applies for when the token is applied as a query parameter or to the body of the request.\
+**Possible options:** Any string\
 **Default:** `'token'`
 
 ### expires - `int|string|Closure|Carbon`
 This determines when the access token expires.\
 **Possible options:** \
-integer - for how long until expiry in seconds)\
-string  - Can be key of the field in response that contains the expiry of the token. Can also be a string with a date. This is then parsed by Carbon::parse so any format that Carbon can parse is acceptable.\
-Closure - A closure that receives the refresh response and can return any other acceptable value (integer, string or Carbon object).\
-Carbon  - A Carbon object with the time of the expiry.\
+**integer** - for how long until expiry in seconds)\
+**string**  - Can be key of the field in response that contains the expiry of the token. Can also be a string with a date. This is then parsed by Carbon::parse so any format that Carbon can parse is acceptable.\
+**Closure** - A closure that receives the refresh response and can return any other acceptable value (integer, string or Carbon object).\
+**Carbon**  - A Carbon object with the time of the expiry.\
 **Default:** `3600`
 
 ### accessToken - `string|Closure`
 This is where the access token can be found on the refresh response.\
 **Possible options:**\
-string - The key of the access token in the refresh response.\
-Closure - A closure that receives the refresh response and should return the token as a string.\
+**string** - The key of the access token in the refresh response.\
+**Closure** - A closure that receives the refresh response and should return the token as a string.\
 **Default:** `'access_token'`
 
 ### tokenTypeCustomCallback - `?Closure`
