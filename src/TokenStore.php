@@ -10,7 +10,7 @@ class TokenStore
 {
     protected static function generateCacheKey(string $refreshUrl): string
     {
-        return 'oauth_token_'.Str::of($refreshUrl)->replace(['https://', '/'], [''])->__toString();
+        return 'oauth_token_'.Str::of($refreshUrl)->replace(['https://', '/'], ['', '-'])->__toString();
     }
 
     /**
