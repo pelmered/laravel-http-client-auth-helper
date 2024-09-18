@@ -18,25 +18,11 @@ If you have a use case that is not super obscure,
 please [open an issue](https://github.com/pelmered/laravel-http-client-auth-helper/issues/new) where you provide as much detail as possible,
 or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pulls) with a working solution.
 
-#### Note: the API is not yet stable and the documentation is in the process of being updated. I hope I can release a version 1 soon.
-
-#### TODO before stable 1.0.0 version:
-- ~~Define a stable API~~
-- ~~Set good defaults~~
-  - ~~Auth type: Basic or bearer?~~
-  - ~~Expires option~~
-  - ~~Credential token key~~
-  - ~~Access token key~~
-- ~~Improve data validation and error messages~~
-- ~~Write/update readme~~
-- ~~Make the cache store configurable~~
-- ~~Maybe: add more tests~~
-- ~~Maybe: Add support for authorization_code and implicit grants~~ → target for version 1.1
-
-##### Plans for 1.1
+##### Plans for 1.1 - [Milestone](https://github.com/pelmered/laravel-http-client-auth-helper/milestone/2)
 
 - Automatically refresh tokens in the background before they expire.
 - Add support for authorization_code and implicit OAuth2 grants.
+- Tokens owned by a model. For example, tokens associated with a user model rather than the whole application.
 
 [![Latest Stable Version](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/v/stable)](https://packagist.org/packages/pelmered/laravel-http-client-auth-helper)
 [![Total Downloads](https://poser.pugx.org/pelmered/laravel-http-client-auth-helper/d/total)](//packagist.org/packages/pelmered/laravel-http-client-auth-helper)
@@ -48,7 +34,7 @@ or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pul
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/?branch=main)
 
-[![Tested on PHP 8.1 to 8.4](https://img.shields.io/badge/Tested%20on%20PHP-8.1%20|%208.2%20|%208.3%20|%208.4-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/filament-money-field/actions/workflows/tests.yml)
+[![Tested on PHP 8.2 to 8.4](https://img.shields.io/badge/Tested%20on%20PHP-8.2%20|%208.3%20|%208.4-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/filament-money-field/actions/workflows/tests.yml)
 [![Tested on OS:es Linux, MacOS, Windows](https://img.shields.io/badge/Tested%20on%20lastest%20versions%20of-%20Ubuntu%20|%20MacOS%20|%20Windows-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/laravel-http-client-auth-helper/actions/workflows/tests.yml)
 
 ## Table of contents
