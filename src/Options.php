@@ -27,13 +27,6 @@ class Options
         $this->validateOptions();
     }
 
-    /*
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-    */
-
     /**
      * @return array<string, string>
      */

@@ -24,9 +24,8 @@ class Credentials
     public const GRANT_TYPE_PASSWORD_CREDENTIALS = 'password_credentials';
 
     //TODO: Add support for authorization_code and implicit grants
-    public const GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
-
-    public const GRANT_TYPE_IMPLICIT = 'implicit';
+    //public const GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
+    //public const GRANT_TYPE_IMPLICIT = 'implicit';
 
     private ?Closure $customCallback = null;
 
@@ -85,7 +84,6 @@ class Credentials
         }
 
         if (is_callable($credentials)) {
-            //$this->authType       = self::AUTH_TYPE_CUSTOM;
             $this->customCallback = $credentials(...);
 
             return;
@@ -158,26 +156,11 @@ class Credentials
     public function setRefreshToken(string $token): void
     {
         $this->token = $token;
-        /*
-        if (empty($this->options->authType)) {
-            $this->options->authType = self::AUTH_TYPE_BEARER;
-        }
-        */
     }
 
     public function setClientCredentialsPair(string $clientId, string $clientSecret): void
     {
         $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
-
-        /*
-        if ($tokenType) {
-            //$this->options->authType = $tokenType;
-        }
-
-        if (empty($this->authType)) {
-            $this->options->authType = self::AUTH_TYPE_BASIC;
-        }
-        */
     }
 }
