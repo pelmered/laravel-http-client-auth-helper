@@ -27,10 +27,14 @@ class UrlHelper
         return self::parseTokenFromQueryString($queryString, $queryKey);
     }
 
-    public static function parseTokenFromQueryString(string $queryString, string $queryKey = 'token'): string|array
+    public static function parseTokenFromQueryString(string $queryString, string $queryKey = 'token'): null|string|array
     {
         parse_str($queryString, $output);
 
-        return $output[$queryKey];
+        if (! isset($output[$queryKey])) {
+            return null;
+        }
+
+        return $output[$queryKey] ?? null;
     }
 }
