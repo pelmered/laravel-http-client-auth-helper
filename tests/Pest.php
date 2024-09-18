@@ -25,6 +25,7 @@
 */
 
 use Carbon\Carbon;
+use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
@@ -49,10 +50,18 @@ function something()
 {
 
 }
-function isSameAccessToken($accessToken1, $accessToken2)
+function isSameAccessToken($accessToken1, $accessToken2, int $tolerableExpiryDiff = 0)
 {
-    expect($accessToken1->getAccessToken())->toBe($accessToken2->getAccessToken())
-        ->and($accessToken1->getExpiresIn())->toBeWithin($accessToken1->getExpiresIn(), 10)
+    expect($accessToken1)->toBeInstanceOf(AccessToken::class)
+        ->and($accessToken2)->toBeInstanceOf(AccessToken::class)
+        ->and($accessToken1->getAccessToken())->toBe($accessToken2->getAccessToken())
+        ->and($accessToken1->getTokenType())->toBe($accessToken2->getTokenType())
         ->and($accessToken1->getExpiresAt())->toBeInstanceOf(Carbon::class)
         ->and($accessToken1->getCustomCallback())->toBe($accessToken1->getCustomCallback());
+
+    $tolerableExpiryDiff >= 0
+        ? expect($accessToken1->getExpiresIn())->toBe($accessToken1->getExpiresIn())
+            ->and($accessToken1->getExpiresAt()->getPreciseTimestamp(6))->toBe($accessToken2->getExpiresAt()->getPreciseTimestamp(6))
+        : expect($accessToken1->getExpiresIn())->toBeWithin($accessToken1->getExpiresIn(), $tolerableExpiryDiff)
+            ->and($accessToken1->getExpiresAt()->timestamp)->toBeWithin($accessToken2->getExpiresAt()->timestamp, $tolerableExpiryDiff);
 }
