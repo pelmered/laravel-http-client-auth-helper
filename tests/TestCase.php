@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\LaravelHttpOAuthHelperServiceProvider;
+use Pelmered\LaravelHttpOAuthHelper\UrlHelper;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -50,7 +51,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
                 }
 
                 if (Str::of($request->url())->startsWith('https://example.com/api?token=')) {
-                    $token = AccessToken::parseQueryTokenFromUrl($request->url());
+                    $token = UrlHelper::parseQueryTokenFromUrl($request->url());
 
                     return Http::response([
                         'data'  => 'some data with query string token',

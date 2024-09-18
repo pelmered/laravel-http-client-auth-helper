@@ -13,6 +13,7 @@ use Pelmered\LaravelHttpOAuthHelper\AccessToken;
 use Pelmered\LaravelHttpOAuthHelper\Credentials;
 use Pelmered\LaravelHttpOAuthHelper\Options;
 use Pelmered\LaravelHttpOAuthHelper\RefreshToken;
+use Pelmered\LaravelHttpOAuthHelper\UrlHelper;
 
 describe('Refresh Token Class', function () {
     test('refresh token basic', function () {
@@ -332,13 +333,13 @@ describe('Refresh Token Class', function () {
                 authType: Credentials::AUTH_TYPE_QUERY,
                 tokenName: 'custom_token_name',
                 accessToken: function (Response $response) {
-                    return AccessToken::parseQueryTokenFromResponse($response, 'custom_token_name');
+                    return UrlHelper::parseQueryTokenFromResponse($response, 'custom_token_name');
                 }
             ),
         );
         Http::assertSent(function (Request $request) {
 
-            $token = AccessToken::parseQueryTokenFromUrl($request->url(), 'custom_token_name');
+            $token = UrlHelper::parseQueryTokenFromUrl($request->url(), 'custom_token_name');
 
             expect($token)->toBe('my_query_token');
 
