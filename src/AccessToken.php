@@ -77,26 +77,4 @@ final class AccessToken
         return ($this->customCallback)($httpClient);
     }
 
-    public static function parseQueryTokenFromResponse(Response $response, string $queryKey = 'token'): ?string
-    {
-        $uri = $response->effectiveUri();
-
-        if (! $uri) {
-            return null;
-        }
-
-        return self::parseTokenFromQueryString($response->effectiveUri()?->getQuery(), $queryKey);
-    }
-
-    public static function parseQueryTokenFromUrl(string $url, string $queryKey = 'token'): string
-    {
-        return self::parseTokenFromQueryString(parse_url($url, PHP_URL_QUERY), $queryKey);
-    }
-
-    public static function parseTokenFromQueryString(string $queryString, string $queryKey = 'token'): string
-    {
-        parse_str($queryString, $output);
-
-        return $output[$queryKey];
-    }
 }
