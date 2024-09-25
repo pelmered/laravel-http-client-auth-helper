@@ -10,7 +10,8 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 - Automatically caches the access tokens for their lifetime.
 - Extends the Laravel HTTP Client to make it straightforward to use. Se the [usage section](#usage) below for examples. 
 - Supports common auth flows like OAuth2 and refresh tokens with most grant types.
-- No configuration required. Just [require](#installation) and use. 
+- No configuration and no boilerplate code required. Just [require](#installation) and use with a simple and consise API.
+- Supports [callbacks](#customize-with-callbacks) to customize the behaviour when needed.
 
 #### Vision, roadmap & plans for the future
 
@@ -21,7 +22,7 @@ or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pul
 
 ##### Plans for 1.1 - [Milestone](https://github.com/pelmered/laravel-http-client-auth-helper/milestone/2)
 
-- Automatically refresh tokens in the background before they expire.
+- Helper for automatically refresh tokens in the background before they expire.
 - Add support for authorization_code and implicit OAuth2 grants.
 - Tokens owned by a model. For example, tokens associated with a user model rather than the whole application.
 
