@@ -10,6 +10,7 @@ This helper takes care of all the headaches and boilerplate code with a simple a
 - Automatically caches the access tokens for their lifetime.
 - Extends the Laravel HTTP Client to make it straightforward to use. Se the [usage section](#usage) below for examples. 
 - Supports common auth flows like OAuth2 and refresh tokens with most grant types.
+- No configuration required. Just [require](#installation) and use. 
 
 #### Vision, roadmap & plans for the future
 
