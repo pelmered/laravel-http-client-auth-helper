@@ -29,11 +29,39 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: intl, fileinfo, zip
-      - name: Setup problem matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ignore-platform-reqs
       - name: Execute tests
         run: vendor/bin/pest
+
+  report-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: pcov
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction
+      - name: Execute tests
+        run: vendor/bin/pest --coverage-clover=build/logs/clover.xml
+      - name: Execute type coverage tests
+        run: vendor/bin/pest --type-coverage --type-coverage-json=build/logs/pest-coverage.json
+
+      - name: Upload Test Coverage
+        env:
+          OTTERWISE_TOKEN: ${{ secrets.OTTERWISE_TOKEN }}
+        run: bash <(curl -s https://raw.githubusercontent.com/getOtterWise/bash-uploader/main/uploader.sh)
+
+      - name: Upload Types Coverage
+        env:
+          OTTERWISE_TOKEN: ${{ secrets.OTTERWISE_TOKEN }}
+        run: bash <(curl -s https://raw.githubusercontent.com/getOtterWise/bash-uploader/main/uploader.sh) --type-coverage-file build/logs/pest-coverage.json
