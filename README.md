@@ -94,68 +94,6 @@ I will try to fix reported issues as soon as possible, but I do this in my spare
 composer require pelmered/laravel-http-client-auth-helper
 ```
 
-## Options reference
-
-### scopes - `array`
-Scopes to send when requesting an access token.
-Typically only used for OAuth2 flows.\
-**Possible options:** array with strings
-**Default:** `[]`
-
-### authType - `string`
-The type of authorization for the refresh token request.\
-**Possible options:** `Credentials::AUTH_TYPE_BEARER`, `Credentials::AUTH_TYPE_BODY`, `Credentials::AUTH_TYPE_QUERY`, `Credentials::AUTH_TYPE_BASIC`, `Credentials::AUTH_TYPE_CUSTOM`,\
-**Default:** `Credentials::AUTH_TYPE_BEARER` (=`'Bearer'`)
-
-### grantType - `string`
-Grant type for OAuth2 flows.\
-**Possible options:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS`, `Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS` (authorization_code and implicit grants are not yet supported. See [issue #3](https://github.com/pelmered/laravel-http-client-auth-helper/issues/3))\
-**Default:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS` (=`'client_credentials'`)
-
-### tokenType - `string`
-How the access token should be applied to all subsequent requests.\
-**Possible options:** `AccessToken::TOKEN_TYPE_BEARER`, `AccessToken::TOKEN_TYPE_QUERY`, `AccessToken::TOKEN_TYPE_CUSTOM` \
-**Default:** `AccessToken::TOKEN_TYPE_BEARER` (=`'Bearer'`)
-
-### tokenName - `string`
-The name of the token field. This only applies for when the token is applied as a query parameter or to the body of the request.\
-**Possible options:** Any string\
-**Default:** `'token'`
-
-### expires - `int|string|Closure|Carbon`
-This determines when the access token expires.\
-**Possible options:** \
-**integer** - for how long until expiry in seconds)\
-**string**  - Can be key of the field in response that contains the expiry of the token. Can also be a string with a date. This is then parsed by Carbon::parse so any format that Carbon can parse is acceptable.\
-**Closure** - A closure that receives the refresh response and can return any other acceptable value (integer, string or Carbon object).\
-**Carbon**  - A Carbon object with the time of the expiry.\
-**Default:** `3600`
-
-### accessToken - `string|Closure`
-This is where the access token can be found on the refresh response.\
-**Possible options:**\
-**string** - The key of the access token in the refresh response.\
-**Closure** - A closure that receives the refresh response and should return the token as a string.\
-**Default:** `'access_token'`
-
-### tokenTypeCustomCallback - `?Closure`
-A callback for giving dull control of how the authentication should be applied. 
-The closure receives the Http client and should return a new Http Client where the auth information has been appended.\
-**Possible options:**\ Any closure that returns a Http Client (`Illuminate\Http\Client\PendingRequest`).\
-**Default:** `null`
-
-### cacheKey - `?string`
-The cache key that should be used to save the access tokens.
-If left empty, it will be generated based on the refresh URL.\
-**Possible options:**\
-**Default:** `null`
-
-### cacheDriver - `?string`
-The cache driver/store that should be used for storing the access tokens.
-If left empty, the Laravel default will be used.\
-**Possible options:**\
-**Default:** `null`
-
 ## Usage
 
 It's really simple to use. Just add the `withRefreshToken` method to your HTTP request and provide the necessary parameters. No configuration needed.
@@ -182,6 +120,7 @@ $response = Http::withRefreshToken(
     'client_secret',
   ],
   [
+    // Options, see the end of the readme for full explaination of each field. 
     'scopes' => [],
     'expires' => 'expires_in', // When token should be considered expired. A string key in the response JSON for the expiration. We try to parse different formats and then remove 1 minute to be on the safe side.
     'auth_type' => 'body', // 'body' or 'header'
@@ -207,6 +146,7 @@ $response = Http::withRefreshToken(
     clientId: 'client_id',
     clientSecret: 'client_secret',
   ),
+  // Options, see the end of the readme for full explaination of each field. 
   new Options(
     scopes: ['scope1', 'scope2'],
     expires: 3600,
@@ -308,3 +248,65 @@ and then use it anywhere like this:
 ```php
 app('my-oauth-client')->get('posts');
 ```
+
+## Options reference (Third parameter in `withRefreshToken()`
+
+### scopes - `array`
+Scopes to send when requesting an access token.
+Typically only used for OAuth2 flows.\
+**Possible options:** array with strings
+**Default:** `[]`
+
+### authType - `string`
+The type of authorization for the refresh token request.\
+**Possible options:** `Credentials::AUTH_TYPE_BEARER`, `Credentials::AUTH_TYPE_BODY`, `Credentials::AUTH_TYPE_QUERY`, `Credentials::AUTH_TYPE_BASIC`, `Credentials::AUTH_TYPE_CUSTOM`,\
+**Default:** `Credentials::AUTH_TYPE_BEARER` (=`'Bearer'`)
+
+### grantType - `string`
+Grant type for OAuth2 flows.\
+**Possible options:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS`, `Credentials::GRANT_TYPE_PASSWORD_CREDENTIALS` (authorization_code and implicit grants are not yet supported. See [issue #3](https://github.com/pelmered/laravel-http-client-auth-helper/issues/3))\
+**Default:** `Credentials::GRANT_TYPE_CLIENT_CREDENTIALS` (=`'client_credentials'`)
+
+### tokenType - `string`
+How the access token should be applied to all subsequent requests.\
+**Possible options:** `AccessToken::TOKEN_TYPE_BEARER`, `AccessToken::TOKEN_TYPE_QUERY`, `AccessToken::TOKEN_TYPE_CUSTOM` \
+**Default:** `AccessToken::TOKEN_TYPE_BEARER` (=`'Bearer'`)
+
+### tokenName - `string`
+The name of the token field. This only applies for when the token is applied as a query parameter or to the body of the request.\
+**Possible options:** Any string\
+**Default:** `'token'`
+
+### expires - `int|string|Closure|Carbon`
+This determines when the access token expires.\
+**Possible options:** \
+**integer** - for how long until expiry in seconds)\
+**string**  - Can be key of the field in response that contains the expiry of the token. Can also be a string with a date. This is then parsed by Carbon::parse so any format that Carbon can parse is acceptable.\
+**Closure** - A closure that receives the refresh response and can return any other acceptable value (integer, string or Carbon object).\
+**Carbon**  - A Carbon object with the time of the expiry.\
+**Default:** `3600`
+
+### accessToken - `string|Closure`
+This is where the access token can be found on the refresh response.\
+**Possible options:**\
+**string** - The key of the access token in the refresh response.\
+**Closure** - A closure that receives the refresh response and should return the token as a string.\
+**Default:** `'access_token'`
+
+### tokenTypeCustomCallback - `?Closure`
+A callback for giving dull control of how the authentication should be applied. 
+The closure receives the Http client and should return a new Http Client where the auth information has been appended.\
+**Possible options:**\ Any closure that returns a Http Client (`Illuminate\Http\Client\PendingRequest`).\
+**Default:** `null`
+
+### cacheKey - `?string`
+The cache key that should be used to save the access tokens.
+If left empty, it will be generated based on the refresh URL.\
+**Possible options:**\
+**Default:** `null`
+
+### cacheDriver - `?string`
+The cache driver/store that should be used for storing the access tokens.
+If left empty, the Laravel default will be used.\
+**Possible options:**\
+**Default:** `null`
