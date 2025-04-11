@@ -2,7 +2,7 @@
 
 An easy-to-use helper for Laravel HTTP Client to make manage API requests with a two-step auth flow. 
 For example, OAuth2 or refresh tokens to get a new short-lived access token.\
-This helper takes care of all the headaches and boilerplate code with a simple and easy-to-use interface.
+This helper takes care of all the headaches and boilerplate code with a simple and easy-to-use API.
 
 #### Features:
 
