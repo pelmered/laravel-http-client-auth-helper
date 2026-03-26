@@ -36,7 +36,7 @@ or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pul
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/pelmered/laravel-http-client-auth-helper/?branch=main)
 
-[![Tested on PHP 8.2 to 8.4](https://img.shields.io/badge/Tested%20on%20PHP-8.2%20|%208.3%20|%208.4-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/filament-money-field/actions/workflows/tests.yml)
+[![Tested on PHP 8.2 to 8.4, plus Laravel 13 on PHP 8.3](https://img.shields.io/badge/Tested%20on%20PHP-8.2%20|%208.3%20|%208.4%20%2B%20L13%20on%208.3-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/laravel-http-client-auth-helper/actions/workflows/tests.yml)
 [![Tested on OS:es Linux, MacOS, Windows](https://img.shields.io/badge/Tested%20on%20lastest%20versions%20of-%20Ubuntu%20|%20MacOS%20|%20Windows-brightgreen.svg?maxAge=2419200)](https://github.com/pelmered/laravel-http-client-auth-helper/actions/workflows/tests.yml)
 
 ## Table of contents
@@ -70,7 +70,8 @@ or [submit a PR](https://github.com/pelmered/laravel-http-client-auth-helper/pul
 ## Requirements
 
 - PHP 8.2 or higher
-- Laravel 10
+- Laravel 10 to 13
+- Laravel 13 requires PHP 8.3 or higher
 
 ## Vision, roadmap & plans for the future
 
