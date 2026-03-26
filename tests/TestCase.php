@@ -79,6 +79,15 @@ class TestCase extends \Orchestra\Testbench\TestCase
                     'database' => ':memory:',
                     'prefix'   => '',
                 ],
+                'cache.default' => 'array',
+                'cache.stores.array' => [
+                    'driver' => 'array',
+                    'serialize' => false,
+                ],
+                'cache.stores.file' => [
+                    'driver' => 'file',
+                    'path' => __DIR__.'/cache',
+                ],
                 'queue.batching.database' => 'testbench',
                 'queue.failed.database'   => 'testbench',
 
