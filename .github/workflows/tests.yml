@@ -34,6 +34,27 @@ jobs:
       - name: Execute tests
         run: vendor/bin/pest
 
+  laravel-13:
+    runs-on: ubuntu-latest
+
+    name: Laravel 13 - PHP 8.3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: intl, fileinfo, zip
+
+      - name: Install Laravel 13 dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction --with "illuminate/support:^13.0" --with "orchestra/testbench:^11.0"
+
+      - name: Execute tests
+        run: vendor/bin/pest
+
   report-metrics:
     runs-on: ubuntu-latest
 
